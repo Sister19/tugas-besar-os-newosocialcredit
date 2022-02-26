@@ -1,4 +1,3 @@
-// PROTOTYPES
 #define true 1
 #define false 0
 #define length 128
@@ -52,6 +51,21 @@ void printString(char* buffer){
   // print char by char
   for(i = 0; buffer[i] != '\0'; i++){ // output selama ga \0
     interrupt(0x10, 0xE * 256 + buffer[i], 0, 0, 0);
+  }
+}
+
+void printStringColored(char *c, int baris, int kolom, int warna){
+  /* Menulis string pada baris dan kolom dengan warna sesuai parameter fungsi */
+  int i, b, alamat;
+  i = 0;
+
+  alamat = (baris-1)*80*2 + 2*kolom;
+  while(c[i] != '\0'){
+    b = alamat;
+    putInMemory(0xB000, b+0x8000, c[i]);
+    putInMemory(0xB000, b+0x8001, warna);
+    i = i + 1;
+    alamat = alamat + 2;
   }
 }
 
@@ -119,20 +133,22 @@ void clearScreen(){
   printString("Screen cleared!");
 }
 
+
+
 void printTitle(){
   
-  printString(" ________   _______   ___       __   ________  ________      "); endl;
-  printString("|\\   ___  \\|\\  ___ \\ |\\  \\     |\\  \\|\\   __  \\|\\   ____\\     "); endl;
-  printString("\\ \\  \\ \\  \\ \\   __/|\\ \\  \\    \\ \\  \\ \\  \\|\\  \\ \\  \\___|_    "); endl;
-  printString(" \\ \\  \\ \\  \\ \\  \\_|/_\\ \\  \\  __\\ \\  \\ \\  \\\\  \\ \\_____  \\   "); endl;
-  printString("  \\ \\  \\ \\  \\ \\  \\_|\\ \\ \\  \\|\\__\\_\\  \\ \\  \\\\  \\|____|\\  \\  "); endl;
-  printString("   \\ \\__\\ \\__\\ \\_______\\ \\____________\\ \\_______\\____\\_\\  \\ "); endl;
-  printString("    \\|__| \\|__|\\|_______|\\|____________|\\|_______|\\_________\\"); endl;
-  printString("                                                 \\|_________|"); endl;
+  printStringColored(" ________   _______   ___       __   ________  ________      ",1,0,0x0A); endl;
+  printStringColored("|\\   ___  \\|\\  ___ \\ |\\  \\     |\\  \\|\\   __  \\|\\   ____\\     ",2,0,0x0A); endl;
+  printStringColored("\\ \\  \\ \\  \\ \\   __/|\\ \\  \\    \\ \\  \\ \\  \\|\\  \\ \\  \\___|_    ",3,0,0x0A); endl;
+  printStringColored(" \\ \\  \\ \\  \\ \\  \\_|/_\\ \\  \\  __\\ \\  \\ \\  \\\\  \\ \\_____  \\   ",4,0,0x0A); endl;
+  printStringColored("  \\ \\  \\ \\  \\ \\  \\_|\\ \\ \\  \\|\\__\\_\\  \\ \\  \\\\  \\|____|\\  \\  ",5,0,0x0A); endl;
+  printStringColored("   \\ \\__\\ \\__\\ \\_______\\ \\____________\\ \\_______\\____\\_\\  \\ ",6,0,0x0A); endl;
+  printStringColored("    \\|__| \\|__|\\|_______|\\|____________|\\|_______|\\_________\\",7,0,0x0A); endl;
+  printStringColored("                                                 \\|_________|",8,0,0x0A); endl;
   endl;
-  printString("(tentative name because it's still kinda horrendous right now)"); endl;
+  printStringColored("(tentative name because it's still kinda horrendous right now)",10,0,0x0D); endl;
   endl; 
-  printString("What you can CURRENTLY do right now, though: "); endl;
-  printString("1. Enter a string and the OS will output it again (yes)"); endl;
-  printString("2. Enter '~' to clear the terminal, sounds quite simple (because it is) "); endl; endl;
+  printStringColored("What you can CURRENTLY do right now, though: ",12,0,0x09); endl;
+  printStringColored("1. Enter a string and the OS will output it again (yes)",13,0,0x0B); endl;
+  printStringColored("2. Enter '~' to clear the terminal, sounds quite simple (because it is) ",14,0,0x0B); endl; endl;
 }
