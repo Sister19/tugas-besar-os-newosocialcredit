@@ -1,26 +1,34 @@
+#ifndef __STD_LIB_H
+#define __STD_LIB_H
+
 #include "std_type.h"
 
-// Operator matematika umum
-// Implementasikan
-// Tips : Gunakan C integer division
-int div(int a, int b);
+// Konstanta
+// Definisi null terminated character
+#define nullt '\0'
 
+// Operator matematika umum
+
+// Pembagian dua bilangan bulat (hasilnya dibulatkan menjadi bilangan bulat)
+int div(int a, int b);
+// Modulo dua bilangan bulat
 int mod(int a, int n);
 
-
 // Operasi standar bahasa C
-// Implementasikan
+// Menyalin n bytes yang ditunjuk src ke dest
 void memcpy(byte *dest, byte *src, unsigned int n);
-// Mengcopy n bytes yang ditunjuk src ke dest
 
-unsigned int strlen(char *string);
 // Mengembalikan panjang suatu null terminated string
+unsigned int strlen(char *string);
 
+// Mengembalikan true jika kedua string sama
 bool strcmp(char *s1, char *s2);
-// Mengembalikan true jika string sama
 
-void strcpy(char *dst, char *src);
 // Melakukan penyalinan null terminated string
+// Prekondisi: dst terdefinisi, punya panjang yang sama dengan src.
+void strcpy(char *dst, char *src);
 
-void clear(byte *ptr, unsigned int n);
 // Mengosongkan byte array yang memiliki panjang n
+void clear(byte *ptr, unsigned int n);
+
+#endif
