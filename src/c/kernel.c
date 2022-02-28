@@ -22,7 +22,6 @@ int main()
         endl;
         printString("Input string (cls: clear): ");
         readString(buffer);
-        // clear screen if tilde (idk)
         if (strcmp(buffer, "cls"))
         {
             clearScreen();
@@ -123,7 +122,7 @@ void clearScreen()
 
     interrupt(
         INT_VIDEO,
-        0X2,
+        AX_VIDEO_SETCURSOR,
         PAGE_NUMBER,
         START_CURSOR,
         START_CURSOR
@@ -159,15 +158,11 @@ void printTitle()
     printStringColored("                                                 \\|_________|", 8, 0, 0x0A);
     endl;
     endl;
-    printStringColored("(tentative name because it's still kinda horrendous right now)", 10, 0, 0x0D);
+    printStringColored("Quick guide of currently available functions: ", 12, 0, 0x09);
     endl;
+    printStringColored("1. Enter a string and the system will print it", 13, 0, 0x0B);
     endl;
-    printStringColored("What you can CURRENTLY do right now, though: ", 12, 0, 0x09);
-    endl;
-    printStringColored("1. Enter a string and the OS will output it again (yes)", 13, 0, 0x0B);
-    endl;
-    printStringColored("2. Enter '~' to clear the terminal, sounds quite simple (because it "
-                       "is) ",
+    printStringColored("2. Enter 'cls' to clear the terminal ",
                        14, 0, 0x0B);
     endl;
     endl;
