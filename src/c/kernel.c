@@ -1,20 +1,15 @@
 #include "header/kernel.h"
+#include "header/screen.h"
+#include "header/constant.h"
 #include "header/std_lib.h"
 
 #define length 128
-#define endl printString("\r\n");
-
-// Stripping the header means we have to late-define the functions.
-// void printString(char *buffer);
-// void readString(char *buffer);
-// void clearScreen();
-// void printTitle();
 
 char buffer[length + 1];
 
 int main()
 {
-    interrupt(INT_VIDEO, AX_VIDEO_MODE, 0, 0, 0); // set video mode to 03
+    setVideoMode(VIDEO_MODE);
     printTitle();
     while (true)
     {
@@ -22,6 +17,7 @@ int main()
         endl;
         printString("Input string (cls: clear): ");
         readString(buffer);
+        // clear screen if cls
         if (strcmp(buffer, "cls"))
         {
             clearScreen();
@@ -50,16 +46,6 @@ void handleInterrupt21(int AX, int BX, int CX, int DX)
     }
 }
 
-void printString(char *buffer)
-{
-    int i = 0;
-    // print char by char
-    for (i = 0; buffer[i] != nullt; i++)
-    { // output selama ga \0
-        printChar(buffer[i]);
-    }
-}
-
 void printStringColored(char *c, int baris, int kolom, int warna)
 {
     /* Menulis string pada baris dan kolom dengan warna sesuai parameter fungsi */
@@ -80,10 +66,12 @@ void printStringColored(char *c, int baris, int kolom, int warna)
 void readString(char *buffer)
 {
     int index = 0;
+    int input;
     while (true)
     {
         // get interrupt for 0x16 (used to scan keyboard input)
-        int input = interrupt(INT_KEYBOARD, AX_KEYBOARD_READ, 0, 0, 0);
+        intr(INT_KEYBOARD, AX_KEYBOARD_READ, 0, 0, 0);
+        input = REG_L(AX);
         // If input is either CR or LF (enter), finish reading string
         if (input == 0xD || input == 0xA)
         {
@@ -93,11 +81,8 @@ void readString(char *buffer)
         // delete input if input is backspace (0x8) and there's any buffer left
         else if (input == 0x8 && index > 0)
         {
-            buffer[index] = nullt;
-            index--;
-            // delete character sequence
-            // backspace, reset character (thus moving the cursor again), then backspace again
-            printChar(0x8); printChar(0x0); printChar(0x8);
+            buffer[index--] = nullt;
+            deleteChar();
         }
         // get the input if it's a printable character
         else if (input >= 0x20 && input <= 0x7e && index < length)
@@ -108,25 +93,6 @@ void readString(char *buffer)
         }
         // otherwise we ignore input
     }
-}
-
-void clearScreen()
-{
-    interrupt(
-        INT_VIDEO,
-        AX_VIDEO_SCROLLUP,
-        BX_VIDEO_COLOR_DEFAULT,
-        START_CURSOR,
-        END_CURSOR
-    );
-
-    interrupt(
-        INT_VIDEO,
-        AX_VIDEO_SETCURSOR,
-        PAGE_NUMBER,
-        START_CURSOR,
-        START_CURSOR
-    );
 }
 
 void printTitle()
@@ -166,8 +132,4 @@ void printTitle()
                        14, 0, 0x0B);
     endl;
     endl;
-}
-
-void printChar(char c) {
-    interrupt(INT_VIDEO, AX_TELETYPE_WRITE(c), 0, 0, 0);
 }

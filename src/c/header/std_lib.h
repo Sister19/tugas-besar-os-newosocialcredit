@@ -3,14 +3,8 @@
 
 #include "std_type.h"
 
-// Konstanta
-// Definisi null terminated character
-#define nullt '\0'
-
 // Operator matematika umum
 
-// Pembagian dua bilangan bulat (hasilnya dibulatkan menjadi bilangan bulat)
-int div(int a, int b);
 // Modulo dua bilangan bulat
 int mod(int a, int n);
 
@@ -30,5 +24,8 @@ void strcpy(char *dst, char *src);
 
 // Mengosongkan byte array yang memiliki panjang n
 void clear(byte *ptr, unsigned int n);
+
+// Konversi uinteger ke string
+char* itoa(int x);
 
 #endif

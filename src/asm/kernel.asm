@@ -23,7 +23,7 @@ _putInMemory:
 	pop bp
 	ret
 
-;int interrupt (int number, int AX, int BX, int CX, int DX)
+;int interrupt (int number, int *AX, int *BX, int *CX, int *DX)
 _interrupt:
 	push bp
 	mov bp,sp
@@ -34,14 +34,26 @@ _interrupt:
 	mov si,intr
 	mov [si+1],al	;change the 00 below to the contents of AL
 	pop ds
-	mov ax,[bp+6]	;get the other parameters AX, BX, CX, and DX
-	mov bx,[bp+8]
-	mov cx,[bp+10]
-	mov dx,[bp+12]
+	; pass by reference those sweet parameters
+	mov si,[bp+6]	;get the other parameters AX, BX, CX, and dx
+	mov ax,[si]
+	mov si,[bp+8]
+	mov bx,[si]
+	mov si,[bp+10]
+	mov cx,[si]
+	mov si,[bp+12]
+	mov dx,[si]
 
 intr:	int 0x00	;call the interrupt (00 will be changed above)
 
-	mov ah,0	;we only want AL returned
+	mov si,[bp+6]	;put parameters AX, BX, CX, and DX back
+	mov [si],ax
+	mov si,[bp+8]
+	mov [si],bx
+	mov si,[bp+10]
+	mov [si],cx
+	mov si,[bp+12]
+	mov [si],dx
 	pop bp
 	ret
 

@@ -1,11 +1,7 @@
 #include "header/std_lib.h"
+#include "header/constant.h"
 
 // Operator matematika umum
-int div(int a, int b)
-{
-    return a / b;
-}
-
 int mod(int a, int n)
 {
     return a - n * (a / n);
@@ -40,7 +36,7 @@ bool strcmp(char *s1, char *s2)
             return false;
         i++;
     }
-    return true;
+    return (s1[i] == nullt && s2[i] == nullt);
 }
 
 void strcpy(char *dst, char *src)
@@ -61,4 +57,16 @@ void clear(byte *ptr, unsigned int n)
     {
         ptr[i] = 0;
     }
+}
+
+char str[8];
+char* itoa(int x)
+{
+    int i = 0;
+    do {
+        str[i++] = mod(x, 10) + '0';
+        x /= 10;
+    } while (x);
+    str[i] = '\0';
+    return str;
 }
