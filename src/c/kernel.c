@@ -7,7 +7,7 @@
 
 int main()
 {
-    setVideoMode(VIDEO_MODE);
+    setVideoMode(VIDEO_MODE); // set video mode to 03
     printTitle();
     while (true)
     {
@@ -24,10 +24,12 @@ int main()
             clearScreen();
             printString("Screen cleared!"); endl;
         }
+        // show menu if cls
         else if (strcmp(command, "help"))
         {
             help();
         }
+        // initiate read/write if rw
         else if (strcmp(command, "rw")){
             printString("Input a string: ");
             readString(buffer);

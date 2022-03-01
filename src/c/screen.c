@@ -25,6 +25,27 @@ void printChar(char c)
 
 void clearScreen()
 {
+    /*interrupt for scrolling down (clearing screen you can say)
+    16-bits register can be divided into two parts:
+      ...X = |  ...H |  ...L |
+    
+    mode: 0x10 (write)
+    AX, function code register (0x0600) (AX_VIDEO_SCROLLUP)
+      AH = 0x06 (scroll up)
+      AL = 0x00 (scroll up 0 lines, dependent to DX)
+    BX, color register (0x0F00) (BX_VIDEO_COLOR_DEFAULT)
+      BH: 0x0F (white color / foreground)
+      BL: 0x00 (black color / background)
+    CX, number of beginning row and column (START_CURSOR)
+      CH: upper row number, 0
+      CL: left column number, 0
+    DX, number of ending row and column (END_CURSOR
+      DH: lower row number, 24 (0x18)
+      DL: right column number, 79 (0x4F)
+
+      call interrupt 0x02 (AX_VIDEO_SETCURSOR) to reset cursor position
+  */
+
     intr(INT_VIDEO, AX_VIDEO_SCROLLUP, BX_VIDEO_COLOR_DEFAULT, START_CURSOR, END_CURSOR);
     intr(INT_VIDEO, AX_VIDEO_SETCURSOR, PAGE_NUMBER, START_CURSOR, START_CURSOR);
 }
@@ -32,7 +53,7 @@ void clearScreen()
 void printString(char *buffer)
 {
     int i = 0;
-    // print char by char
+    // print char by char while buffer[i] is not a null-terminating character
     for (i = 0; buffer[i] != nullt; i++)
     { // output selama ga \0
         printChar(buffer[i]);
