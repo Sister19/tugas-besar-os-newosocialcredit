@@ -20,5 +20,7 @@
 #define VIDEO_MODE 0x3
 // Null terminated
 #define nullt '\0'
+// Length of the buffer
+#define length 128
 
 #endif
