@@ -1,13 +1,9 @@
-#include "header/kernel.h"
-#include "header/screen.h"
-#include "header/constant.h"
-#include "header/std_lib.h"
-#include "header/keyboard.h"
-
+#include "header/all_headers.h"
 
 int main()
 {
     setVideoMode(VIDEO_MODE); // set video mode to 03
+    fillMap(); // call fillMap function
     printTitle();
     while (true)
     {

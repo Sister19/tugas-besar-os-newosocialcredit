@@ -1,0 +1,6 @@
+#include "header/kernel.h"
+#include "header/screen.h"
+#include "header/constant.h"
+#include "header/std_lib.h"
+#include "header/keyboard.h"
+#include "header/filesystem.h"
