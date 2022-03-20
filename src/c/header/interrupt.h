@@ -27,6 +27,7 @@ int AX, BX, CX, DX;
 // Teletype write (ah=0x0E)
 // http://www.ctyme.com/intr/rb-0106.htm
 // al = characters to write
+// 0x0E00 + x = 0x0E0x -> AH = 0x0E/0xE, AL = 0x0x
 #define AX_TELETYPE_WRITE(x) ((0x0E << 8) + x)
 // Write character at cursor pos (ah=0x0A)
 // The difference between teletype is that they dont move the cursor.
@@ -59,5 +60,14 @@ int AX, BX, CX, DX;
 // Get keystroke (ah=0x00)
 // returns ah = BIOS scan code, al = ascii char
 #define AX_KEYBOARD_READ 0x0000
+
+// =================
+// C. Read/Write services
+// =================
+#define INT_RW 0x13
+// Read first sector
+#define AX_READ 0x0201
+// Write first sector
+#define AX_WRITE 0x0301
 
 #endif

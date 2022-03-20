@@ -42,7 +42,6 @@ void clearScreen()
     DX, number of ending row and column (END_CURSOR
       DH: lower row number, 24 (0x18)
       DL: right column number, 79 (0x4F)
-
       call interrupt 0x02 (AX_VIDEO_SETCURSOR) to reset cursor position
   */
 
