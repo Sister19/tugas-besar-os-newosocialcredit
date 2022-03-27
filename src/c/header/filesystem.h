@@ -1,6 +1,8 @@
-// Filesystem data structure
 #ifndef FILESYSTEM_H
-#define FILESYSTE_H
+#define FILESYSTEM_H
+
+#include "interrupt.h"
+#include "std_lib.h"
 #include "std_type.h"
 
 // Menunjukkan lokasi sektor filesystem
@@ -11,12 +13,19 @@
 // Isi byte P/S node yang terletak pada root.
 #define FS_NODE_P_IDX_ROOT   0xFF
 #define FS_NODE_S_IDX_FOLDER 0xFF
+#define PARENT_OFFSET 0x0
+#define ENTRY_OFFSET 0x1
+#define FNAME_LEN 0xD
 
-// constants untuk readwrite
-// ada 36 sektor per silinder 
+// read/write constants
+#define SECTOR_SIZE 512
 #define SECTORS_PER_CYLINDER 36
 #define SECTORS_PER_HEAD 18
+#define FILE_SECTOR_SIZE (SECTORS_PER_CYLINDER / SECTORS_PER_HEAD)
+#define FILE_ENTRY_SIZE 16 //16 byte per one entry in sector
+#define FILE_ENTRY_COUNT (SECTOR_SIZE * FILE_SECTOR_SIZE / FILE_ENTRY_SIZE)
 // Untuk filesystem map
+
 struct map_filesystem {
     bool is_filled[512];
 };
@@ -72,4 +81,5 @@ void fillMap();
 void readSector(byte *buffer, int sector_number);
 void writeSector(byte* buffer, int sector_number);
 void read(struct file_metadata *metadata, enum fs_retcode *return_code);
-#endif;
+
+#endif

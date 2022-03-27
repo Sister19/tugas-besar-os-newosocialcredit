@@ -1,6 +1,4 @@
 #include "header/filesystem.h"
-#include "header/interrupt.h"
-#include "header/std_lib.h"
 
 void readSector(byte* buffer, int sector_number){
     int sector_read_count = 0x01;
@@ -37,10 +35,11 @@ void writeSector(byte* buffer, int sector_number){
 }
 
 void fillMap(){
+    int i = 0;
     struct map_filesystem map_fs_buffer;
     readSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
     // mengubah sektor 0-15 dan 256-511 menjadi terisi
-    int i = 0;
+
     for (i = 0; i < 15; i++){
         map_fs_buffer.is_filled[i] = true;
     }
@@ -132,6 +131,7 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
 }
 
 void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
+    char buffer[512];
     struct node_filesystem   node_fs_buffer;
     struct sector_filesystem sector_fs_buffer;
     struct map_filesystem    map_fs_buffer;
@@ -268,7 +268,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
         // 4. Persiapkan variabel j = 0 untuk iterator entry sector yang kosong
         j = 0;
         // 5. Persiapkan variabel buffer untuk entry sector kosong
-        char buffer[512];
+
         count_partition=0;
         is_write_complete = false;
         i = 0;
