@@ -4,6 +4,8 @@
 #include "filesystem.h"
 #include "constant.h"
 #include "std_lib.h"
+#include "keyboard.h"
+#include "screen.h"
 
 void shell();
 void ls();
