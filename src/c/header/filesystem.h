@@ -21,8 +21,8 @@
 #define SECTOR_SIZE 512
 #define SECTORS_PER_CYLINDER 36
 #define SECTORS_PER_HEAD 18
-#define FILE_SECTOR_SIZE (SECTORS_PER_CYLINDER / SECTORS_PER_HEAD)
-#define FILE_ENTRY_SIZE 16 //16 byte per one entry in sector
+#define FILE_SECTOR_SIZE 2
+#define FILE_ENTRY_SIZE 0x10 //16 byte per one entry in sector
 #define FILE_ENTRY_COUNT (SECTOR_SIZE * FILE_SECTOR_SIZE / FILE_ENTRY_SIZE)
 // Untuk filesystem map
 
