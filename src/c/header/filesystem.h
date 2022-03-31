@@ -16,6 +16,7 @@
 #define PARENT_OFFSET 0x0
 #define ENTRY_OFFSET 0x1
 #define FNAME_LEN 0xD
+#define IDX_NODE_UNDEF 64
 
 // read/write constants
 #define SECTOR_SIZE 512
@@ -79,7 +80,10 @@ enum fs_retcode {
 // header untuk fungsi
 void fillMap();
 void readSector(byte *buffer, int sector_number);
+void readNodeFs(struct node_filesystem *node_fs_buffer);
 void writeSector(byte* buffer, int sector_number);
 void read(struct file_metadata *metadata, enum fs_retcode *return_code);
+byte getNodeIdx(struct node_filesystem *node_fs_buffer, char* name);
+byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, byte parent);
 
 #endif

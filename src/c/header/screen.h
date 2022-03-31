@@ -21,6 +21,8 @@ void clearScreen();
 void printChar(char c);
 // Print a string into the screen
 void printString(char *string);
+// Print a string into the screen with color
+void printStringColored(char *c, int warna);
 // Delete a character from the current cursor
 void deleteChar();
 

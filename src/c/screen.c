@@ -13,6 +13,16 @@ void setCursor(int x, int y)
     intr(INT_VIDEO, AX_VIDEO_SETCURSOR, 0, 0, REG(y, x));
 }
 
+void forwardCursor() {
+    if (cursorX == MAX_CURSOR_X)
+    {
+        cursorX = 0;
+        cursorY++;
+    } else {
+        cursorX++;
+    }
+}
+
 void setVideoMode(int mode)
 {
     intr(INT_VIDEO, mode, 0, 0, 0);
@@ -59,21 +69,21 @@ void printString(char *buffer)
     }
 }
 
-void printStringColored(char *c, int baris, int kolom, int warna)
+void printStringColored(char *c, int warna)
 {
     /* Menulis string pada baris dan kolom dengan warna sesuai parameter fungsi */
     int i, b, alamat;
     i = 0;
-
-    alamat = (baris - 1) * 80 * 2 + 2 * kolom;
+    getCursor();
     while (c[i] != nullt)
     {
-        b = alamat;
-        putInMemory(VID_SEGMENT, b + 0x8000, c[i]);
-        putInMemory(VID_SEGMENT, b + 0x8001, warna);
-        i = i + 1;
-        alamat = alamat + 2;
+        alamat = (cursorY * 80 + cursorX) * 2;
+        putInMemory(VID_SEGMENT, alamat + 0x8000, c[i]);
+        putInMemory(VID_SEGMENT, alamat + 0x8001, warna);
+        forwardCursor();
+        i++;
     }
+    setCursor(cursorX, cursorY);
 }
 
 void deleteChar()
@@ -98,21 +108,21 @@ void deleteChar()
 
 void printTitle()
 {
-    printStringColored("====================================================", 1, 0, 0x0A); endl;
-    printStringColored("||  _   _               _____ _____        _____  ||", 2, 0, 0x0A); endl;
-    printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", 3, 0, 0x0A); endl;
-    printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", 4, 0, 0x0A); endl;
-    printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", 5, 0, 0x0A); endl;
-    printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", 6, 0, 0x0A); endl;
-    printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", 7, 0, 0x0A); endl;
-    printStringColored("|| v.1.0.0                                        ||", 8, 0, 0x0A); endl;
-    printStringColored("====================================================", 9, 0, 0x0A); endl;
+    printStringColored("====================================================", 0x0A); endl;
+    printStringColored("||  _   _               _____ _____        _____  ||", 0x0A); endl;
+    printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", 0x0A); endl;
+    printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", 0x0A); endl;
+    printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", 0x0A); endl;
+    printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", 0x0A); endl;
+    printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", 0x0A); endl;
+    printStringColored("|| v.1.0.0                                        ||", 0x0A); endl;
+    printStringColored("====================================================", 0x0A); endl;
 
-    printStringColored("A IF2230 Milestone 1 Project made by:", 11, 0, 0x0E); endl;
-    printStringColored("- 13520103 - Amar Fadil", 12, 0, 0x0A); endl;
-    printStringColored("- 13520124 - Owen Christian Wijaya", 13, 0, 0x0A); endl;
-    printStringColored("- 13520139 - Fachry Dennis Heraldi", 14, 0, 0x0A); endl;
-    printStringColored("Type 'help' to show the help menu!", 16, 0, 0x0B); endl;
+    printStringColored("A IF2230 Milestone 1 Project made by:", 0x0E); endl;
+    printStringColored("- 13520103 - Amar Fadil", 0x0A); endl;
+    printStringColored("- 13520124 - Owen Christian Wijaya", 0x0A); endl;
+    printStringColored("- 13520139 - Fachry Dennis Heraldi", 0x0A); endl;
+    printStringColored("Type 'help' to show the help menu!", 0x0B); endl;
 
     endl;endl;
 }

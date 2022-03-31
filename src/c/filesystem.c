@@ -40,13 +40,41 @@ void fillMap(){
     readSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
     // mengubah sektor 0-15 dan 256-511 menjadi terisi
 
-    for (i = 0; i < 15; i++){
+    for (i = 0; i < 16; i++)
         map_fs_buffer.is_filled[i] = true;
-    }
-    for (i = 256; i < 511; i++){
+
+    for (i = 256; i < 512; i++)
         map_fs_buffer.is_filled[i] = true;
-    }
+
     writeSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
+}
+
+void readNodeFs(struct node_filesystem *node_fs_buffer) {
+    readSector(&(node_fs_buffer->nodes[0]), FS_NODE_SECTOR_NUMBER);
+    readSector(&(node_fs_buffer->nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+}
+
+byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, byte parent) {
+    byte i;
+    for (i = 0; i < 64; i++) {
+        if (
+            node_fs_buffer->nodes[i].parent_node_index == parent
+            && strcmp(node_fs_buffer->nodes[i].name, name)
+        ) {
+            return i;
+        }
+    }
+    return 64;
+}
+
+byte getNodeIdx(struct node_filesystem *node_fs_buffer, char* name) {
+    byte i;
+    for (i = 0; i < 64; i++) {
+        if (strcmp(node_fs_buffer->nodes[i].name, name)) {
+            return i;
+        }
+    }
+    return 64;
 }
 
 void read(struct file_metadata *metadata, enum fs_retcode *return_code){
@@ -62,8 +90,7 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     bool is_node_found = false;
 
     // Masukkan filesystem dari storage ke memori buffer
-    readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
-    readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+    readNodeFs(&node_fs_buffer);
     readSector(sector_fs_buffer.sector_list, FS_SECTOR_SECTOR_NUMBER);
 
     
@@ -73,8 +100,9 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // dan keluar.
 
     // Asumsi metadata sudah terdefinisi dengan benar (masukan dari parameter valid)
+    i = 0;
     while (i < 64 && !is_node_found){
-        if (strcmp(node_fs_buffer.nodes[i].name, metadata->node_name) == 1){ // Nama node cocok
+        if (strcmp(node_fs_buffer.nodes[i].name, metadata->node_name)){ // Nama node cocok
             if (node_fs_buffer.nodes[i].parent_node_index == metadata->parent_index){ // Parent node cocok
                 is_node_found = true;
             }
@@ -125,9 +153,6 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
         *return_code = FS_R_TYPE_IS_FOLDER;
         return;
     }
-
-    
-    
 }
 
 void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
@@ -147,8 +172,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     
     // Masukkan filesystem dari storage ke memori
     readSector(&(map_fs_buffer.is_filled[0]), FS_MAP_SECTOR_NUMBER);
-    readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
-    readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+    readNodeFs(&node_fs_buffer);
     readSector(sector_fs_buffer.sector_list, FS_SECTOR_SECTOR_NUMBER);
     
     // 1. Cari node dengan nama dan lokasi parent yang sama pada node.
@@ -158,7 +182,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     index_node = 0;
     is_node_found = false;
     while (index_node < 64 && !is_node_found){
-        if (strcmp(node_fs_buffer.nodes[index_node].name, metadata->node_name) == 1){ // Nama node cocok
+        if (strcmp(node_fs_buffer.nodes[index_node].name, metadata->node_name)){ // Nama node cocok
             if (node_fs_buffer.nodes[index_node].parent_node_index == metadata->parent_index){ // Parent node cocok
                 is_node_found = true;
             }

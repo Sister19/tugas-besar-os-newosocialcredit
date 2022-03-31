@@ -6,12 +6,23 @@
 #include "std_lib.h"
 #include "keyboard.h"
 #include "screen.h"
+#include "kernel.h"
 
+#define MAX_ARGS 5
+
+char __arg1[256];
+char __arg2[256];
+char __arg3[256];
+char __arg4[256];
+char __arg5[256];
+char* args[MAX_ARGS] = {__arg1, __arg2, __arg3, __arg4, __arg5};
+int arg_count = 0;
+
+void parseArgs(char* args);
 void shell();
 void ls();
-void mkdir(char* folder_name, char curr_dir);
-void get_dir_table(char* directory_table);
-void getdir(char* string, char* directory_table, char curr_dir);
+void cd(char* path);
+void mkdir(char* fname);
 
 
 #endif
