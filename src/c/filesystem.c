@@ -1,5 +1,6 @@
 #include "header/filesystem.h"
 #include "header/screen.h"
+
 void readSector(byte* buffer, int sector_number){
     int sector_read_count = 0x01;
     int cylinder = (sector_number / SECTORS_PER_CYLINDER);
@@ -204,7 +205,6 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     index_node = 0;
     is_node_found = false;
     while (index_node < 64 && !is_node_found){ // Node yang kosong adalah jika nama node kosong 
-        printString(itoa(strlen(node_fs_buffer.nodes[index_node].name))); endl;
         if (strlen(node_fs_buffer.nodes[index_node].name) == 0){ // Nama node kosong
             is_node_found = true; // Node kosong ditemukan, informasi indeksnya adalah index_node
         }
@@ -223,7 +223,8 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     //    Jika pada indeks tersebut adalah file atau entri kosong,
     //    Tuliskan retcode FS_W_INVALID_FOLDER dan keluar.
     if (node_fs_buffer.nodes[metadata->parent_index].sector_entry_index != FS_NODE_S_IDX_FOLDER){
-        *return_code = FS_W_INVALID_FOLDER;
+        // *return_code = FS_W_INVALID_FOLDER;
+        *return_code = FS_W_MAXIMUM_SECTOR_ENTRY;
         return;
     }
 
