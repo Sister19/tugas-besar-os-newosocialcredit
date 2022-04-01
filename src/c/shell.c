@@ -116,8 +116,12 @@ void ls(char* path){
         }
         i++;
     }
-    if (cnt > 0)
+    if (cnt > 0){
         endl;
+    }
+    else{
+        printString("Directory empty!"); endl;
+    }
 }
 
 void cd(char* path) {

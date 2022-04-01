@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NAMA_IMAGE "out/system.img"
+#define NAMA_IMAGE "system.img"
 
 typedef unsigned char byte;
 
