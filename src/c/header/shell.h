@@ -23,6 +23,7 @@ void shell();
 void ls();
 void cd(char* path);
 void mkdir(char* fname);
+void cat(char* fname);
 
 
 #endif

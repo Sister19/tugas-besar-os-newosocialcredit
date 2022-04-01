@@ -147,6 +147,15 @@ void parseArgs(char* input) {
     }
 }
 
+
+// void cd(char* path) {
+//     byte cdir;
+//     readNodeFs(&node_fs_buffer);
+//     cdir = parsePathArg(path);
+//     if (cdir != IDX_NODE_UNDEF)
+//         current_dir = cdir;
+// }
+
 void shell() {
     // while (true){
 

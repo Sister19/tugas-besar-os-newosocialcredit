@@ -1,7 +1,8 @@
 all: diskimage bootloader kernel
-all-tc: all
+tc:
 	gcc tc_gen/tc_gen.c tc_gen/tc_lib -o tc_gen/tc_gen
-	./tc_gen/tc_gen C
+	./tc_gen/tc_gen A
+	bochs -f src/config/if2230.config || true
 diskimage:
 	dd if=/dev/zero of=out/system.img bs=512 count=2880
 bootloader:
@@ -20,6 +21,6 @@ kernel: stdlib system
 	ld86 -o out/kernel -d out/kernel.o out/kernel_asm.o out/std_lib.o out/screen.o out/keyboard.o out/filesystem.o out/shell.o
 	dd if=out/kernel of=out/system.img bs=512 conv=notrunc seek=1
 run:
-	bochs -f src/config/if2230.config
+	bochs -f src/config/if2230.config || true
 build-run: all run
-build-tc-run: all-tc run
+tc-run: build-run tc
