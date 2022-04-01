@@ -1,5 +1,5 @@
 #include "header/filesystem.h"
-
+#include "header/screen.h"
 void readSector(byte* buffer, int sector_number){
     int sector_read_count = 0x01;
     int cylinder = (sector_number / SECTORS_PER_CYLINDER);
@@ -204,6 +204,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     index_node = 0;
     is_node_found = false;
     while (index_node < 64 && !is_node_found){ // Node yang kosong adalah jika nama node kosong 
+        printString(itoa(strlen(node_fs_buffer.nodes[index_node].name))); endl;
         if (strlen(node_fs_buffer.nodes[index_node].name) == 0){ // Nama node kosong
             is_node_found = true; // Node kosong ditemukan, informasi indeksnya adalah index_node
         }

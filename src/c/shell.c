@@ -2,24 +2,27 @@
 byte current_dir = FS_NODE_P_IDX_ROOT;
 
 void mkdir(char* fname){
-    struct file_metadata metadata;
-    enum fs_retcode ret;
-
-    metadata.buffer = 0x00;
-    strcpy(metadata.node_name, fname);
-    metadata.parent_index = current_dir;
-    metadata.filesize = 0;
-
+    struct file_metadata* metadata;
+    enum fs_retcode* ret;
+    int AX;
+    memcpy(metadata->parent_index, 0x00, 0x01);
+    // printString(fname);
+    strcpy(metadata->node_name, fname);
+    memcpy(&metadata->parent_index, current_dir, sizeof(current_dir));
+    metadata->filesize = 0;
+    
+    // interrupt(0x21, AX, metadata->buffer, metadata->node_name, *ret);
     write(metadata, ret);
-    switch (ret)
+
+    printString(itoa(ret)); endl;
+
+    switch (*ret)
     {
         case 0:
             printString("Directory created successfully!"); endl;
-            printString("Directory name: ");
-            printString(&fname); endl;
             break;
         default:
-            printString("Error "); //printString(itoa(ret)); endl;
+            printString("Error"); endl;
             break;
     }
 }
@@ -119,9 +122,6 @@ void ls(char* path){
     if (cnt > 0){
         endl;
     }
-    else{
-        printString("Directory empty!"); endl;
-    }
 }
 
 void cd(char* path) {
@@ -162,12 +162,12 @@ void shell() {
     // while (true){
     char input_buf[256];
     char path_str[256];
-
     while (true) {
         makeInterrupt21();
         printCWD(current_dir);
         printString(" NewOS | >> ");
         readString(input_buf);
+        printString(itoa(strlen(input_buf))); 
         parseArgs(input_buf);
         endl;
         if (arg_count > MAX_ARGS) {
@@ -198,9 +198,4 @@ void shell() {
         }
     }
 
-    //mkdir("test", current_dir);
-    //printString("mkdir over"); endl;
-    //ls(directory_table, current_dir);
-
-    //printString("process over"); endl;
 }

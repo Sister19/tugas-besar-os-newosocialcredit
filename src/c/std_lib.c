@@ -19,7 +19,7 @@ void memcpy(byte *dest, byte *src, unsigned int n)
 
 unsigned int strlen(char *string)
 {
-    int i = 0;
+    unsigned int i = 0;
     while (string[i] != nullt)
     {
         i++;
@@ -93,6 +93,7 @@ void clear_char(char* buffer, int len){
 }
 
 char str[8];
+
 char* itoa(int x)
 {
     int i = 0;
