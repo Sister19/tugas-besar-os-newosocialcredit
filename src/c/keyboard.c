@@ -2,7 +2,11 @@
 #include "header/constant.h"
 #include "header/screen.h"
 
-
+void readKey(char* scancode, char* key) {
+    intr(INT_KEYBOARD, AX_KEYBOARD_READ, 0, 0, 0);
+    *scancode = REG_H(AX);
+    *key = REG_L(AX);
+}
 
 void readString(char *buffer)
 {
@@ -14,19 +18,19 @@ void readString(char *buffer)
         intr(INT_KEYBOARD, AX_KEYBOARD_READ, 0, 0, 0);
         input = REG_L(AX);
         // If input is either CR or LF (enter), finish reading string
-        if (input == 0xD || input == 0xA)
+        if (input == KEY_CR || input == KEY_LF)
         {
             buffer[index] = nullt;
             return;
         }
         // delete input if input is backspace (0x8) and there's any buffer left
-        else if (input == 0x8 && index > 0)
+        else if (input == KEY_BKSP && index > 0)
         {
             buffer[index--] = nullt;
-            deleteChar();
+            printChar(KEY_BKSP);
         }
         // get the input if it's a printable character
-        else if (input >= 0x20 && input <= 0x7e && index < length)
+        else if (IS_PRINTABLE(input) && index < MAX_INPUT)
         {
             buffer[index++] = input;
             // display character

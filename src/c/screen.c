@@ -1,5 +1,6 @@
 #include "header/screen.h"
 #include "header/constant.h"
+#include "header/keyboard.h"
 
 void getCursor()
 {
@@ -17,10 +18,13 @@ void forwardCursor() {
     if (cursorX == MAX_CURSOR_X)
     {
         cursorX = 0;
-        cursorY++;
+        if (++cursorY > MAX_CURSOR_Y) {
+            intr(INT_VIDEO, 0x0601, BX_VIDEO_COLOR_DEFAULT, 0x0000, END_CURSOR);
+        }
     } else {
         cursorX++;
     }
+    setCursor(cursorX, cursorY);
 }
 
 void setVideoMode(int mode)
@@ -28,9 +32,20 @@ void setVideoMode(int mode)
     intr(INT_VIDEO, mode, 0, 0, 0);
 }
 
-void printChar(char c)
-{
-    intr(INT_VIDEO, AX_TELETYPE_WRITE(c), 0, 0, 0);
+void printCharColored(char c, char color) {
+    getCursor();
+    if (c == KEY_LF || c == KEY_CR) {
+        setCursor(0, ++cursorY);
+    } else if (c == KEY_BKSP) {
+        deleteChar();
+    } else if (IS_PRINTABLE(c)) {
+        intr(INT_VIDEO, AX_WRITE_CHAR(c), color, 1, 0);
+        forwardCursor();
+    }
+}
+
+void printChar(char c) {
+    printCharColored(c, COLOR_GRAY);
 }
 
 void clearScreen()
@@ -72,64 +87,57 @@ void printString(char *buffer)
 void printStringColored(char *c, int warna)
 {
     /* Menulis string pada baris dan kolom dengan warna sesuai parameter fungsi */
-    int i, b, alamat;
+    unsigned int i;
     i = 0;
-    getCursor();
     while (c[i] != nullt)
     {
-        alamat = (cursorY * 80 + cursorX) * 2;
-        putInMemory(VID_SEGMENT, alamat + 0x8000, c[i]);
-        putInMemory(VID_SEGMENT, alamat + 0x8001, warna);
-        forwardCursor();
+        printCharColored(c[i], warna);
         i++;
     }
-    setCursor(cursorX, cursorY);
 }
 
 void deleteChar()
 {
-    getCursor();
     if (cursorX == 0)
     { // already leftmost
         // delete character sequence
         // go rightmost up
         setCursor(MAX_CURSOR_X, cursorY - 1);
         // delete character. cursor will be in leftmost down again
-        intr(INT_VIDEO, AX_WRITE_CHAR(nullt), PAGE_NUMBER, 1, 0);
+        intr(INT_VIDEO, AX_WRITE_CHAR(KEY_SP), COLOR_GRAY, 1, 0);
     }
     else
     {
         // delete character sequence
         // backspace, reset character (thus moving the cursor again), then backspace again
-        printChar(0x8);
-        intr(INT_VIDEO, AX_WRITE_CHAR(nullt), PAGE_NUMBER, 1, 0);
+        setCursor(cursorX - 1, cursorY);
+        intr(INT_VIDEO, AX_WRITE_CHAR(KEY_SP), COLOR_GRAY, 1, 0);
     }
 }
 
 void printTitle()
 {
-    printStringColored("====================================================", 0x0A); endl;
-    printStringColored("||  _   _               _____ _____        _____  ||", 0x0A); endl;
-    printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", 0x0A); endl;
-    printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", 0x0A); endl;
-    printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", 0x0A); endl;
-    printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", 0x0A); endl;
-    printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", 0x0A); endl;
-    printStringColored("|| v.1.0.0                                        ||", 0x0A); endl;
-    printStringColored("====================================================", 0x0A); endl;
+    printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
+    printStringColored("||  _   _               _____ _____        _____  ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| v.1.0.0                                        ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
 
-    printStringColored("A IF2230 Milestone 1 Project made by:", 0x0E); endl;
-    printStringColored("- 13520103 - Amar Fadil", 0x0A); endl;
-    printStringColored("- 13520124 - Owen Christian Wijaya", 0x0A); endl;
-    printStringColored("- 13520139 - Fachry Dennis Heraldi", 0x0A); endl;
-    printStringColored("Type 'help' to show the help menu!", 0x0B); endl;
+    printStringColored("A IF2230 Milestone 1 Project made by:", COLOR_YELLOW); endl;
+    printStringColored("- 13520103 - Amar Fadil", COLOR_LIGHT_GREEN); endl;
+    printStringColored("- 13520124 - Owen Christian Wijaya", COLOR_LIGHT_GREEN); endl;
+    printStringColored("- 13520139 - Fachry Dennis Heraldi", COLOR_LIGHT_GREEN); endl;
+    printStringColored("Type 'help' to show the help menu!", COLOR_LIGHT_CYAN); endl;
 
     endl;endl;
 }
 
 void help(){
     endl;endl;
-    getCursor();
     printString("==========================================================="); endl;
     printString("|                      HELP MENU                          |"); endl;
     printString("|                                                         |"); endl;
