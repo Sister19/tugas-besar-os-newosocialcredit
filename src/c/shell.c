@@ -1,5 +1,6 @@
 #include "header/shell.h"
 byte current_dir = FS_NODE_P_IDX_ROOT;
+struct node_filesystem node_fs_buffer;
 
 void mkdir(char* fname){
     struct file_metadata* metadata;
@@ -27,46 +28,42 @@ void mkdir(char* fname){
     }
 }
 
-void _printCWDRec(struct node_filesystem *node_fs_buffer, byte dir) {
+void _printCWDRec(byte dir) {
     if (dir == FS_NODE_P_IDX_ROOT) {
-        printChar('/');
+        printCharColored('/', COLOR_LIGHT_GREEN);
     } else {
-        _printCWDRec(node_fs_buffer, node_fs_buffer->nodes[dir].parent_node_index);
-        printString(node_fs_buffer->nodes[dir].name);
-        printChar('/');
+        _printCWDRec(node_fs_buffer.nodes[dir].parent_node_index);
+        printStringColored(node_fs_buffer.nodes[dir].name, COLOR_LIGHT_GREEN);
+        printCharColored('/', COLOR_LIGHT_GREEN);
     }
 }
 
 void printCWD() {
-    struct node_filesystem node_fs_buffer;
-    int i = 0;
     readNodeFs(&node_fs_buffer);
-    printChar('(');
-    _printCWDRec(&node_fs_buffer, current_dir);
-    printChar(')');
+    _printCWDRec(current_dir);
 }
 
-bool applyPath(struct node_filesystem *node_fs_buffer, char *dirname, char* path, byte* cdir, int dot_cnt, int len) {
+bool applyPath(char *dirname, char* path, byte* cdir, int dot_cnt, int len) {
     if (dot_cnt == 2 && len == 2) {
         if (*cdir != FS_NODE_P_IDX_ROOT) // if not root, we can go up
-            *cdir = node_fs_buffer->nodes[*cdir].parent_node_index;
+            *cdir = node_fs_buffer.nodes[*cdir].parent_node_index;
     } else if (!(len == 1 && dirname[0] == '.') && len > 0) { // at least it has length > 0
-        dirname[len] = '\0';
-        *cdir = getNodeIdxFromParent(node_fs_buffer, dirname, *cdir);
+        dirname[len] = nullt;
+        *cdir = getNodeIdxFromParent(&node_fs_buffer, dirname, *cdir);
         if (*cdir == IDX_NODE_UNDEF) { // not found
-            printString("No such file or directory: ");
-            printString(path); endl;
+            printStringColored("No such file or directory: ", COLOR_LIGHT_RED);
+            printStringColored(path, COLOR_LIGHT_BLUE); endl;
             return false;
-        } else if (node_fs_buffer->nodes[*cdir].sector_entry_index != FS_NODE_S_IDX_FOLDER){
-            printString("Not a directory: ");
-            printString(path); endl; // is not a directory
+        } else if (node_fs_buffer.nodes[*cdir].sector_entry_index != FS_NODE_S_IDX_FOLDER){
+            printStringColored("Not a directory: ", COLOR_LIGHT_RED);
+            printStringColored(path, COLOR_LIGHT_BLUE); endl; // is not a directory
             return false;
         }
     }
     return true;
 }
 
-byte parsePathArg(struct node_filesystem *node_fs_buffer, char* path) {
+byte parsePathArg(char* path) {
     char name_temp[14];
     byte dot_cnt = 0;
     int i = 0, len = 0;
@@ -80,7 +77,7 @@ byte parsePathArg(struct node_filesystem *node_fs_buffer, char* path) {
             dot_cnt++;
             name_temp[len++] = path[i];
         } else if (path[i] == '/' || path[i] == '\\') {
-            if (!applyPath(node_fs_buffer, name_temp, path, &cdir, dot_cnt, len))
+            if (!applyPath(name_temp, path, &cdir, dot_cnt, len))
                 return IDX_NODE_UNDEF;
             len = 0;
             dot_cnt = 0;
@@ -90,31 +87,30 @@ byte parsePathArg(struct node_filesystem *node_fs_buffer, char* path) {
         i++;
     }
     if (len > 0) { // remains.
-        if (!applyPath(node_fs_buffer, name_temp, path, &cdir, dot_cnt, len))
+        if (!applyPath(name_temp, path, &cdir, dot_cnt, len))
             return IDX_NODE_UNDEF;
     }
     return cdir;
 }
 
 void ls(char* path){
-    struct node_filesystem node_fs_buffer;
     int i = 0, cnt = 0;
     byte cdir = current_dir;
     readNodeFs(&node_fs_buffer);
     if (path != 0) {
-        cdir = parsePathArg(&node_fs_buffer, path);
+        cdir = parsePathArg(path);
         if (cdir == IDX_NODE_UNDEF)
             return;
     }
     while (i < 64) {
         struct node_entry node = node_fs_buffer.nodes[i];
         if (node.name[0] != nullt && node.parent_node_index == cdir) {
-            printString(node.name); sp; sp;
-            // if (node.sector_entry_index == FS_NODE_S_IDX_FOLDER) {
-            //     printStringColored(node.name, 0x0A); sp; sp;
-            // } else {
-            //     printString(node.name); sp; sp;
-            // }
+            // printString(node.name); sp; sp;
+            if (node.sector_entry_index == FS_NODE_S_IDX_FOLDER) {
+                printStringColored(node.name, COLOR_LIGHT_GREEN); sp; sp;
+            } else {
+                printString(node.name); sp; sp;
+            }
             cnt++;
         }
         i++;
@@ -125,9 +121,9 @@ void ls(char* path){
 }
 
 void cd(char* path) {
-    struct node_filesystem node_fs_buffer;
-    byte cdir = parsePathArg(&node_fs_buffer, path);
+    byte cdir;
     readNodeFs(&node_fs_buffer);
+    cdir = parsePathArg(path);
     if (cdir != IDX_NODE_UNDEF)
         current_dir = cdir;
 }
@@ -160,12 +156,17 @@ void parseArgs(char* input) {
 
 void shell() {
     // while (true){
+<<<<<<< HEAD
     char input_buf[256];
     char path_str[256];
+=======
+    char input_buf[MAX_INPUT];
+
+>>>>>>> 1b3a26c2837439f441ca3deb93663b8f1bfcca8c
     while (true) {
         makeInterrupt21();
-        printCWD(current_dir);
-        printString(" NewOS | >> ");
+        printCWD();
+        printStringColored(" >> ", COLOR_LIGHT_BLUE);
         readString(input_buf);
         printString(itoa(strlen(input_buf))); 
         parseArgs(input_buf);

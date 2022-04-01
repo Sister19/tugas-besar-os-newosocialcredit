@@ -29,11 +29,11 @@ int AX, BX, CX, DX;
 // al = characters to write
 // 0x0E00 + x = 0x0E0x -> AH = 0x0E/0xE, AL = 0x0x
 #define AX_TELETYPE_WRITE(x) ((0x0E << 8) + x)
-// Write character at cursor pos (ah=0x0A)
+// Write character at cursor pos with attr (ah=0x0A)
 // The difference between teletype is that they dont move the cursor.
 // It's basically just write character and that's it
 // http://www.ctyme.com/intr/rb-0100.htm
-#define AX_WRITE_CHAR(x) ((0x0A << 8) + x)
+#define AX_WRITE_CHAR(x) ((0x09 << 8) + x)
 
 // Scroll Up (ah=0x06)
 // http://www.ctyme.com/intr/rb-0096.htm
@@ -43,7 +43,7 @@ int AX, BX, CX, DX;
 // bh = BIOS color attribute
 #define BX_VIDEO_COLOR(col) (col << 8)
 // Default color is grey fg (0x0f) on black bg (0x00)
-#define BX_VIDEO_COLOR_DEFAULT 0x0F00
+#define BX_VIDEO_COLOR_DEFAULT 0x0700
 
 // Set cursor (ah=0x02)
 // http://www.ctyme.com/intr/rb-0087.htm

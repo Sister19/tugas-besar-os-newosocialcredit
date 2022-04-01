@@ -1,7 +1,7 @@
 all: diskimage bootloader kernel
 all-tc: all
 	gcc tc_gen/tc_gen.c tc_gen/tc_lib -o tc_gen/tc_gen
-	./tc_gen/tc_gen A
+	./tc_gen/tc_gen C
 diskimage:
 	dd if=/dev/zero of=out/system.img bs=512 count=2880
 bootloader:

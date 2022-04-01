@@ -18,29 +18,29 @@ void tc_A(byte buf[2880][512]) {
     create_folder(buf, "folder1", 0xFF);
     create_folder(buf, "folder2", 0);
     create_folder(buf, "folder3", 0);
-    insert_file(buf, "file_src/tc_a/hehe", 2);
-    insert_file(buf, "file_src/tc_a/haha", 2);
-    insert_file(buf, "file_src/tc_a/hoho", 2);
+    insert_file(buf, "tc_gen/file_src/tc_a/hehe", 2);
+    insert_file(buf, "tc_gen/file_src/tc_a/haha", 2);
+    insert_file(buf, "tc_gen/file_src/tc_a/hoho", 2);
     create_folder(buf, "folder4", 0);
     create_folder(buf, "folder5", 6);
-    insert_file(buf, "file_src/tc_a/keos", 6);
-    insert_file(buf, "file_src/tc_a/keoskeos", 6);
+    insert_file(buf, "tc_gen/file_src/tc_a/keos", 6);
+    insert_file(buf, "tc_gen/file_src/tc_a/keoskeos", 6);
 
-    insert_file(buf, "file_src/tc_a/file3", 0);
-    insert_file(buf, "file_src/tc_a/file1", 0);
-    insert_file(buf, "file_src/tc_a/file2", 0);
-    insert_file(buf, "file_src/tc_a/file_luar", 0xFF);
+    insert_file(buf, "tc_gen/file_src/tc_a/file3", 0);
+    insert_file(buf, "tc_gen/file_src/tc_a/file1", 0);
+    insert_file(buf, "tc_gen/file_src/tc_a/file2", 0);
+    insert_file(buf, "tc_gen/file_src/tc_a/file_luar", 0xFF);
 }
 
 void tc_B(byte buf[2880][512]) {
-    insert_file(buf, "file_src/tc_b/file_idx_0", 0xFF);
+    insert_file(buf, "tc_gen/file_src/tc_b/file_idx_0", 0xFF);
     create_folder(buf, "folder1", 0xFF);
     for (int i = 1; i < 62; i++) {
         char str_buf[16];
         sprintf(str_buf, "folder%d", i + 1);
         create_folder(buf, str_buf, i);
     }
-    insert_file(buf, "file_src/tc_b/file_idx_63", 0xFF);
+    insert_file(buf, "tc_gen/file_src/tc_b/file_idx_63", 0xFF);
 }
 
 void tc_C(byte buf[2880][512]) {
@@ -58,11 +58,11 @@ void tc_C(byte buf[2880][512]) {
 }
 
 void tc_D(byte buf[2880][512]) {
-    insert_file(buf, "file_src/tc_d/512", 0xFF);
-    insert_file(buf, "file_src/tc_d/1024", 0xFF);
+    insert_file(buf, "tc_gen/file_src/tc_d/512", 0xFF);
+    insert_file(buf, "tc_gen/file_src/tc_d/1024", 0xFF);
     for (int i = 0; i < 14; i++) {
         char str_buf[32];
-        sprintf(str_buf, "file_src/tc_d/8192_%d", i + 1);
+        sprintf(str_buf, "tc_gen/file_src/tc_d/8192_%d", i + 1);
         insert_file(buf, str_buf, 0xFF);
     }
 }

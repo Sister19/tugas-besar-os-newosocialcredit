@@ -21,6 +21,6 @@
 // Null terminated
 #define nullt '\0'
 // Length of the buffer
-#define length 256
+#define MAX_INPUT 128
 
 #endif
