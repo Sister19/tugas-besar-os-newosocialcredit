@@ -156,13 +156,8 @@ void parseArgs(char* input) {
 
 void shell() {
     // while (true){
-<<<<<<< HEAD
     char input_buf[256];
     char path_str[256];
-=======
-    char input_buf[MAX_INPUT];
-
->>>>>>> 1b3a26c2837439f441ca3deb93663b8f1bfcca8c
     while (true) {
         makeInterrupt21();
         printCWD();
