@@ -3,22 +3,16 @@ byte current_dir = FS_NODE_P_IDX_ROOT;
 struct node_filesystem node_fs_buffer;
 
 void mkdir(char* fname){
-    struct file_metadata* metadata;
-    enum fs_retcode* ret;
-    int AX;
-    memcpy(metadata->parent_index, 0x00, 0x01);
-    // printString(fname);
-    strcpy(metadata->node_name, fname);
-    memcpy(&metadata->parent_index, current_dir, sizeof(current_dir));
-    metadata->filesize = 0;
-    // endl; printString(metadata->node_name);
-    // interrupt(0x21, AX, metadata->buffer, metadata->node_name, *ret);
-    write(metadata, ret);
-    endl;
-    printString(itoa(*ret));
-    switch (*ret)
+    struct file_metadata metadata;
+    enum fs_retcode ret;
+    metadata.parent_index = current_dir;
+    metadata.buffer = 0;
+    strcpy(metadata.node_name, fname);
+    metadata.filesize = 0;
+    write(&metadata, &ret);
+    switch (ret)
     {
-        case 0:
+        case FS_SUCCESS:
             printString("Directory created successfully!"); endl;
             break;
         default:
@@ -188,6 +182,8 @@ void shell() {
                 continue;
             }
             cd(args[1]);
+        } else if (strcmp(args[0], "cls")) {
+            clearScreen();
         } else {
             printString("Unknown command"); endl;
         }

@@ -222,7 +222,8 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     // 3. Cek dan pastikan entry node pada indeks P adalah folder.
     //    Jika pada indeks tersebut adalah file atau entri kosong,
     //    Tuliskan retcode FS_W_INVALID_FOLDER dan keluar.
-    if (node_fs_buffer.nodes[metadata->parent_index].sector_entry_index != FS_NODE_S_IDX_FOLDER){
+    if (metadata->parent_index != FS_NODE_P_IDX_ROOT &&
+        node_fs_buffer.nodes[metadata->parent_index].sector_entry_index != FS_NODE_S_IDX_FOLDER){
         // *return_code = FS_W_INVALID_FOLDER;
         *return_code = FS_W_MAXIMUM_SECTOR_ENTRY;
         return;
