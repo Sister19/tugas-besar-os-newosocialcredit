@@ -56,6 +56,9 @@ void shell() {
         } else if (strcmp(args[0], "cat")) {
             if (__checkArgCount(2))
                 cat(args[1]);
+        } else if (strcmp(args[0], "mv")) {
+            if (__checkArgCount(3))
+                mv(args[1], args[2]);
         } else {
             printString("Unknown command"); endl;
         }

@@ -78,9 +78,9 @@ void printString(char *buffer)
 {
     int i = 0;
     // print char by char while buffer[i] is not a null-terminating character
-    for (i = 0; buffer[i] != nullt; i++)
-    { // output selama ga \0
+    while (buffer[i] != nullt) {
         printChar(buffer[i]);
+        i++;
     }
 }
 
@@ -117,15 +117,15 @@ void deleteChar()
 
 void printTitle()
 {
-    printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
-    printStringColored("||  _   _               _____ _____        _____  ||", COLOR_LIGHT_GREEN); endl;
-    printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", COLOR_LIGHT_GREEN); endl;
-    printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", COLOR_LIGHT_GREEN); endl;
-    printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", COLOR_LIGHT_GREEN); endl;
-    printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", COLOR_LIGHT_GREEN); endl;
-    printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", COLOR_LIGHT_GREEN); endl;
-    printStringColored("|| v.1.0.0                                        ||", COLOR_LIGHT_GREEN); endl;
-    printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("||  _   _               _____ _____        _____  ||", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("|| v.1.0.0                                        ||", COLOR_LIGHT_GREEN); endl;
+    // printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
 
     printStringColored("A IF2230 Milestone 1 Project made by:", COLOR_YELLOW); endl;
     printStringColored("- 13520103 - Amar Fadil", COLOR_LIGHT_GREEN); endl;
