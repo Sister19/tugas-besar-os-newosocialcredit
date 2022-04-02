@@ -8,7 +8,7 @@
 
 // Scancodes
 #define SC_TAB 0x0F
-#define SC_CTRL 0x1D
+#define SC_CTRL 0x2E
 #define SC_LSHIFT 0x2A
 #define SC_RSHIFT 0x36
 #define SC_RARROW 0x4D

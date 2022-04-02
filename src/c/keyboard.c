@@ -40,6 +40,7 @@ void readString(char *buffer)
         // get interrupt for 0x16 (used to scan keyboard input)
         intr(INT_KEYBOARD, AX_KEYBOARD_READ, 0, 0, 0);
         input = REG_L(AX); scancode = REG_H(AX);
+        //printString(itoa(input)); sp; printString(itoa(scancode)); endl;
         // if l/r arrow key, we match the cursor
         if (scancode == SC_LARROW && index > 0) {
             --index;
@@ -49,25 +50,34 @@ void readString(char *buffer)
             ++index;
             forwardCursor();
         }
+        // if there's history, we cycle it
         else if (scancode == SC_UARROW && hidx > 0) {
             changeHistory(buffer, false);
         }
         else if (scancode == SC_DARROW && hidx < hist_length - 1) {
             changeHistory(buffer, true);
         }
+        // if CTRL+C, cancel input
+        else if (scancode == SC_CTRL && input == 0x3) {
+            // cancel input
+            buffer[0] = nullt;
+            return;
+        }
         // If input is either CR or LF (enter), finish reading string
         else if (input == KEY_CR || input == KEY_LF)
         {
             buffer[len] = nullt;
-            if (hist_length == MAX_HIST) {
-                i = 0;
-                while (i < MAX_HIST - 1) {
-                    strcpy(history[i], history[i+1]);
-                    ++i;
+            if (len > 0){
+                if (hist_length == MAX_HIST) {
+                    i = 0;
+                    while (i < MAX_HIST - 1) {
+                        strcpy(history[i], history[i+1]);
+                        ++i;
+                    }
+                    strcpy(history[i], buffer);
+                } else {
+                    strcpy(history[hist_length++], buffer);
                 }
-                strcpy(history[i], buffer);
-            } else {
-                strcpy(history[hist_length++], buffer);
             }
             return;
         }
@@ -92,7 +102,7 @@ void readString(char *buffer)
             setCursor(lastCursorX, lastCursorY);
         }
         // get the input if it's a printable character
-        else if (IS_PRINTABLE(input) && len < MAX_INPUT)
+        else if (IS_PRINTABLE(input) && len < MAX_INPUT - 1) // left for nullt
         {
             for (i = len++; i > index; i--) {
                 buffer[i] = buffer[i - 1];

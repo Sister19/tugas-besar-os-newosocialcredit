@@ -3,7 +3,6 @@
 void ret_output(enum fs_retcode ret){
     switch (ret){
         case FS_SUCCESS:
-            printString("Copy success!\n");
             break;
         default:
             printString("Error in copying! :(\n");
