@@ -37,7 +37,6 @@ void writeSector(byte* buffer, int sector_number){
 
 void fillMap(){
     int i = 0;
-    struct map_filesystem map_fs_buffer;
     readSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
     // mengubah sektor 0-15 dan 256-511 menjadi terisi
 
@@ -50,22 +49,22 @@ void fillMap(){
     writeSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
 }
 
-void readNodeFs(struct node_filesystem *node_fs_buffer) {
-    readSector(&(node_fs_buffer->nodes[0]), FS_NODE_SECTOR_NUMBER);
-    readSector(&(node_fs_buffer->nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+void readNodeFs() {
+    readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+    readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
 }
 
-void writeNodeFs(struct node_filesystem *node_fs_buffer) {
-    writeSector(&(node_fs_buffer->nodes[0]), FS_NODE_SECTOR_NUMBER);
-    writeSector(&(node_fs_buffer->nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+void writeNodeFs() {
+    writeSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+    writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
 }
 
-byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, byte parent) {
+byte getNodeIdxFromParent(char* name, byte parent) {
     byte i;
     for (i = 0; i < 64; i++) {
         if (
-            node_fs_buffer->nodes[i].parent_node_index == parent
-            && strcmp(node_fs_buffer->nodes[i].name, name)
+            node_fs_buffer.nodes[i].parent_node_index == parent
+            && strcmp(node_fs_buffer.nodes[i].name, name)
         ) {
             return i;
         }
@@ -73,10 +72,10 @@ byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, by
     return IDX_NODE_UNDEF;
 }
 
-byte getNodeIdx(struct node_filesystem *node_fs_buffer, char* name) {
+byte getNodeIdx(char* name) {
     byte i;
     for (i = 0; i < 64; i++) {
-        if (strcmp(node_fs_buffer->nodes[i].name, name)) {
+        if (strcmp(node_fs_buffer.nodes[i].name, name)) {
             return i;
         }
     }
@@ -85,9 +84,7 @@ byte getNodeIdx(struct node_filesystem *node_fs_buffer, char* name) {
 
 void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // Tambahkan tipe data yang dibutuhkan
-    struct node_filesystem   node_fs_buffer;
     struct node_entry        node_buffer;
-    struct sector_filesystem sector_fs_buffer;
     struct sector_entry      sector_entry_buffer;
     char file_partition[512];
     
@@ -162,9 +159,6 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
 
 void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     char buffer[512];
-    struct node_filesystem   node_fs_buffer;
-    struct sector_filesystem sector_fs_buffer;
-    struct map_filesystem    map_fs_buffer;
     // Tambahkan tipe data yang dibutuhkan
     int index_node, index_map, index_sector;
     int count_empty_sector;

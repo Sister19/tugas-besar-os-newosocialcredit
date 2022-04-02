@@ -4,6 +4,7 @@
 #include "std_lib.h"
 #include "std_type.h"
 #include "interrupt.h"
+#include "constant.h"
 
 // Scancodes
 #define SC_TAB 0x0F
@@ -23,6 +24,11 @@
 
 // Utils
 #define IS_PRINTABLE(input) (input >= 0x20 && input <= 0x7e)
+
+extern char* input_buf;
+extern int firstCursorX, firstCursorY, lastCursorX, lastCursorY;
+extern char* history[MAX_HIST];
+extern int hist_length;
 
 void readString(char* buffer);
 void readKey(char* scancode, char* key);

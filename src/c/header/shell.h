@@ -8,10 +8,6 @@
 #include "screen.h"
 #include "kernel.h"
 
-extern char* __arg1;
-extern char* __arg2;
-extern char* __arg3;
-extern char* __arg4;
 extern char* args[MAX_ARGS];
 extern int arg_count;
 

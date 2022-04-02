@@ -31,6 +31,10 @@ int cursorX, cursorY;
 void getCursor();
 // Set the cursor position
 void setCursor(int x, int y);
+// Forward the cursor
+void forwardCursor();
+// Backward the cursor
+void backwardCursor();
 // Set screen video mode
 void setVideoMode(int mode);
 // Clear the screen

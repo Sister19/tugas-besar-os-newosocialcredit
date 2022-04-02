@@ -47,7 +47,7 @@ void __applyPath(char* path, int dot_cnt, int len) {
     } else if (len > 0 && !(len == 1 && name_temp[0] == '.')) { // at least len > 0 and not .
         name_temp[len] = nullt;
         arg_ldir = arg_cdir;
-        arg_cdir = getNodeIdxFromParent(&node_fs_buffer, name_temp, arg_cdir);
+        arg_cdir = getNodeIdxFromParent(name_temp, arg_cdir);
     }
 }
 

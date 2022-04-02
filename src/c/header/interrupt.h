@@ -28,17 +28,17 @@ int AX, BX, CX, DX;
 // http://www.ctyme.com/intr/rb-0106.htm
 // al = characters to write
 // 0x0E00 + x = 0x0E0x -> AH = 0x0E/0xE, AL = 0x0x
-#define AX_TELETYPE_WRITE(x) ((0x0E << 8) + x)
+#define AX_TELETYPE_WRITE(x) (0x0E00 | x)
 // Write character at cursor pos with attr (ah=0x0A)
 // The difference between teletype is that they dont move the cursor.
 // It's basically just write character and that's it
 // http://www.ctyme.com/intr/rb-0100.htm
-#define AX_WRITE_CHAR(x) ((0x09 << 8) + x)
+#define AX_WRITE_CHAR(x) (0x0900 | x)
 
 // Scroll Up (ah=0x06)
 // http://www.ctyme.com/intr/rb-0096.htm
 // 0x00 al clear the entire window
-#define AX_VIDEO_SCROLLUP 0x0600
+#define AX_VIDEO_SCROLLUP(x) (0x0600 | x)
 // Character color write (bx)
 // bh = BIOS color attribute
 #define BX_VIDEO_COLOR(col) (col << 8)

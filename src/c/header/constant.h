@@ -23,5 +23,6 @@
 // Length of the buffer
 #define MAX_INPUT 128
 #define MAX_ARGS 4
+#define MAX_HIST 5
 
 #endif

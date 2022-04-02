@@ -1,5 +1,4 @@
 #include "header/screen.h"
-#include "header/constant.h"
 #include "header/keyboard.h"
 
 void getCursor()
@@ -11,20 +10,35 @@ void getCursor()
 
 void setCursor(int x, int y)
 {
+    if (y > MAX_CURSOR_Y) {
+        intr(INT_VIDEO, AX_VIDEO_SCROLLUP(0x01), 0x0F00, START_CURSOR, END_CURSOR);
+        y = MAX_CURSOR_Y;
+        --lastCursorY;
+        --firstCursorY;
+    }
     intr(INT_VIDEO, AX_VIDEO_SETCURSOR, 0, 0, REG(y, x));
+    cursorX = x;
+    cursorY = y;
 }
 
 void forwardCursor() {
+    getCursor();
     if (cursorX == MAX_CURSOR_X)
     {
         cursorX = 0;
-        if (++cursorY > MAX_CURSOR_Y) {
-            intr(INT_VIDEO, 0x0601, BX_VIDEO_COLOR_DEFAULT, 0x0000, END_CURSOR);
-        }
+        ++cursorY;
     } else {
-        cursorX++;
+        ++cursorX;
     }
     setCursor(cursorX, cursorY);
+}
+
+void backwardCursor() {
+    getCursor();
+    if (cursorX == 0) // already leftmost
+        setCursor(MAX_CURSOR_X, cursorY - 1);
+    else
+        setCursor(cursorX - 1, cursorY);
 }
 
 void setVideoMode(int mode)
@@ -35,7 +49,7 @@ void setVideoMode(int mode)
 void printCharColored(char c, char color) {
     getCursor();
     if (c == KEY_LF) {
-        setCursor(0, ++cursorY);
+        setCursor(0, cursorY + 1);
     } else if (c == KEY_BKSP) {
         deleteChar();
     } else if (IS_PRINTABLE(c)) {
@@ -70,8 +84,8 @@ void clearScreen()
       call interrupt 0x02 (AX_VIDEO_SETCURSOR) to reset cursor position
   */
 
-    intr(INT_VIDEO, AX_VIDEO_SCROLLUP, BX_VIDEO_COLOR_DEFAULT, START_CURSOR, END_CURSOR);
-    intr(INT_VIDEO, AX_VIDEO_SETCURSOR, PAGE_NUMBER, START_CURSOR, START_CURSOR);
+    intr(INT_VIDEO, AX_VIDEO_SCROLLUP(0), BX_VIDEO_COLOR_DEFAULT, START_CURSOR, END_CURSOR);
+    setCursor(0, 0);
 }
 
 void printString(char *buffer)
@@ -98,21 +112,8 @@ void printStringColored(char *c, int warna)
 
 void deleteChar()
 {
-    if (cursorX == 0)
-    { // already leftmost
-        // delete character sequence
-        // go rightmost up
-        setCursor(MAX_CURSOR_X, cursorY - 1);
-        // delete character. cursor will be in leftmost down again
-        intr(INT_VIDEO, AX_WRITE_CHAR(KEY_SP), COLOR_GRAY, 1, 0);
-    }
-    else
-    {
-        // delete character sequence
-        // backspace, reset character (thus moving the cursor again), then backspace again
-        setCursor(cursorX - 1, cursorY);
-        intr(INT_VIDEO, AX_WRITE_CHAR(KEY_SP), COLOR_GRAY, 1, 0);
-    }
+    backwardCursor();
+    intr(INT_VIDEO, AX_WRITE_CHAR(KEY_SP), COLOR_GRAY, 1, 0);
 }
 
 void printTitle()

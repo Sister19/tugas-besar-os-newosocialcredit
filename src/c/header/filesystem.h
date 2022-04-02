@@ -31,7 +31,6 @@ struct map_filesystem {
     bool is_filled[512];
 };
 
-
 // Untuk filesystem nodes
 struct node_entry {
     byte parent_node_index;
@@ -76,16 +75,19 @@ enum fs_retcode {
     FS_W_INVALID_FOLDER       = 7
 };
 
+extern struct node_filesystem node_fs_buffer;
+extern struct map_filesystem map_fs_buffer;
+extern struct sector_filesystem sector_fs_buffer;
 
 // header untuk fungsi
 void fillMap();
 void readSector(byte *buffer, int sector_number);
-void readNodeFs(struct node_filesystem *node_fs_buffer);
-void writeNodeFs(struct node_filesystem *node_fs_buffer);
+void readNodeFs();
+void writeNodeFs();
 void writeSector(byte* buffer, int sector_number);
 void read(struct file_metadata *metadata, enum fs_retcode *return_code);
 void write(struct file_metadata *metadata, enum fs_retcode *return_code);
-byte getNodeIdx(struct node_filesystem *node_fs_buffer, char* name);
-byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, byte parent);
+byte getNodeIdx(char* name);
+byte getNodeIdxFromParent(char* name, byte parent);
 
 #endif
