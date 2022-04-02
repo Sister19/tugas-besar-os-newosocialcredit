@@ -1,10 +1,16 @@
 #include "../header/shell.h"
 
-bool checkIsFile(char* path, byte cdir) {
+bool isDirectory(byte cdir) {
     if (
         cdir == FS_NODE_P_IDX_ROOT || // is a root or a directory
         node_fs_buffer.nodes[cdir].sector_entry_index == FS_NODE_S_IDX_FOLDER
-    ){
+    )
+        return true;
+    return false;
+}
+
+bool checkIsFile(char* path, byte cdir) {
+    if (isDirectory(cdir)) {
         printStringColored("Not a file: ", COLOR_LIGHT_RED);
         printStringColored(path, COLOR_LIGHT_BLUE); endl; // is not a file
         return false;
@@ -13,10 +19,7 @@ bool checkIsFile(char* path, byte cdir) {
 }
 
 bool checkIsDirectory(char* path, byte cdir) {
-    if (
-        cdir != FS_NODE_P_IDX_ROOT && // if not root and is a file
-        node_fs_buffer.nodes[cdir].sector_entry_index != FS_NODE_S_IDX_FOLDER
-    ){
+    if (!isDirectory(cdir)) {
         printStringColored("Not a directory: ", COLOR_LIGHT_RED);
         printStringColored(path, COLOR_LIGHT_BLUE); endl; // is not a directory
         return false;

@@ -31,6 +31,7 @@ void parseArgs(char* input);
 void parsePathArg(char* path);
 bool checkIsDirectory(char* path, byte cdir);
 bool checkIsExist(char* path, byte cdir);
+bool isDirectory(byte cdir);
 
 // ls.c
 void ls(char* path);
@@ -44,5 +45,10 @@ void mkdir(char* path);
 // cat.c
 void cat(char* path);
 
+// mv.c
+void mv(char* path1, char* path2);
+
+// cp.c
+void cp(char* path1, char* path2);
 
 #endif

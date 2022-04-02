@@ -18,6 +18,8 @@ shell:
 	bcc -ansi -c -o out/shell/cat.o src/c/shell/cat.c
 	bcc -ansi -c -o out/shell/cd.o src/c/shell/cd.c
 	bcc -ansi -c -o out/shell/ls.o src/c/shell/ls.c
+	bcc -ansi -c -o out/shell/mv.o src/c/shell/mv.c
+	bcc -ansi -c -o out/shell/cp.o src/c/shell/cp.c
 system:
 	bcc -ansi -c -o out/system/screen.o src/c/screen.c
 	bcc -ansi -c -o out/system/keyboard.o src/c/keyboard.c
