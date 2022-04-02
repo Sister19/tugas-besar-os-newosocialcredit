@@ -35,7 +35,7 @@ void shell() {
         parseArgs(input_buf);
         endl;
         if (arg_count > MAX_ARGS) {
-            printString("Too many arguments"); endl;
+            printString("Too many arguments\n");
             continue;
         } else if (arg_count == 0) {
             continue;
@@ -59,8 +59,11 @@ void shell() {
         } else if (strcmp(args[0], "mv")) {
             if (__checkArgCount(3))
                 mv(args[1], args[2]);
+        } else if (strcmp(args[0], "cp")){
+            if (__checkArgCount(3))
+                cp(args[1], args[2]);
         } else {
-            printString("Unknown command"); endl;
+            printString("Unknown command\n"); 
         }
     }
 }

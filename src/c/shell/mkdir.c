@@ -12,10 +12,11 @@ void mkdir(char* path){
         switch (ret)
         {
             case FS_SUCCESS:
-                printString("Directory created successfully!"); endl;
+                printString("Directory created successfully!\n");
                 break;
             default:
-                printString("Error"); endl;
+                printString("Error\n");
+
                 break;
         }
     }

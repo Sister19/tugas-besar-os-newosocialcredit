@@ -38,4 +38,7 @@ void clear_char(char *ptr, unsigned int n);
 // Konversi uinteger ke string
 char* itoa(int x);
 
+// Melakukan pembulatan ke atas terhadap pembagian
+int divc(int n, int div);
+
 #endif

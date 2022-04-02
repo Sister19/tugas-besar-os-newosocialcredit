@@ -63,8 +63,6 @@ void writeNodeFs(struct node_filesystem *node_fs_buffer) {
 byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, byte parent) {
     byte i;
     for (i = 0; i < 64; i++) {
-        // printString(itoa(node_fs_buffer->nodes[i].parent_node_index)); sp;
-        // printString(node_fs_buffer->nodes[i].name); endl;
         if (
             node_fs_buffer->nodes[i].parent_node_index == parent
             && strcmp(node_fs_buffer->nodes[i].name, name)
@@ -130,13 +128,11 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     if (node_fs_buffer.nodes[i].sector_entry_index != FS_NODE_S_IDX_FOLDER) { // Node bertipe file
         // Pembacaan
         // 1. memcpy() entry sector sesuai dengan byte S
-        printString("copymem secnum");
         memcpy(
             sector_entry_buffer.sector_numbers, // Menyimpan informasi entry sector dari node yang ditemukan
             sector_fs_buffer.sector_list[node_fs_buffer.nodes[i].sector_entry_index].sector_numbers,
             16
         );
-        printString("iterate sectors");
         // 2. Lakukan iterasi proses berikut, i = 0..15
         // 3. Baca byte entry sector untuk mendapatkan sector number partisi file
         // 4. Jika byte bernilai 0, selesaikan iterasi
@@ -154,7 +150,7 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
             j++;
         } // 6. Lompat ke iterasi selanjutnya hingga iterasi selesai
         // 7. Tulis retcode FS_SUCCESS pada akhir proses pembacaan.
-        printString("vruh");
+        metadata->filesize = 512 * j;
         *return_code = FS_SUCCESS;
         return;
 
@@ -231,8 +227,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     //    Tuliskan retcode FS_W_INVALID_FOLDER dan keluar.
     if (metadata->parent_index != FS_NODE_P_IDX_ROOT &&
         node_fs_buffer.nodes[metadata->parent_index].sector_entry_index != FS_NODE_S_IDX_FOLDER){
-        // *return_code = FS_W_INVALID_FOLDER;
-        *return_code = FS_W_MAXIMUM_SECTOR_ENTRY;
+        *return_code = FS_W_INVALID_FOLDER;
         return;
     }
 
@@ -251,7 +246,8 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
             count_empty_sector++;
         }
     }
-    if (count_empty_sector < metadata->filesize / 512){
+
+    if (count_empty_sector < divc(metadata->filesize, 512)){
         *return_code = FS_W_NOT_ENOUGH_STORAGE;
         return;
     }
@@ -320,7 +316,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
                 j++;
                 //    6. Lakukan writeSector() dengan file pointer buffer pada metadata 
                 //       dan sektor tujuan i
-                clear(buffer[512], 512);
+                clear(buffer, 512);
                 memcpy(buffer, metadata->buffer+count_partition*512, 512);
                 writeSector(buffer, i);
                 count_partition++;
@@ -329,9 +325,8 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
                 if (count_partition*512 >= metadata->filesize){
                     is_write_complete = true;
                 }
-            } else {
-                i++;
-            }
+            } 
+            i++;
         }
     
         // 7. Lakukan update dengan memcpy() buffer entri sector dengan 

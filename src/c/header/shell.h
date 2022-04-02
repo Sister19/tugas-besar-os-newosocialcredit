@@ -49,6 +49,7 @@ void cat(char* path);
 void mv(char* path1, char* path2);
 
 // cp.c
+void ret_output(enum fs_retcode ret);
 void cp(char* path1, char* path2);
 
 #endif

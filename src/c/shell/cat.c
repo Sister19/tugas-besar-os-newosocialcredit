@@ -13,11 +13,10 @@ void cat(char* path) {
         switch (ret)
         {
             case FS_SUCCESS:
-                printString("success");
                 printString(metadata.buffer); endl;
                 break;
             default:
-                printString("Error "); printString(itoa(ret)); endl;
+                printString("Error\n");
                 break;
         }
     }

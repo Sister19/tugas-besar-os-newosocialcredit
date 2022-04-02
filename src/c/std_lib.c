@@ -104,3 +104,7 @@ char* itoa(int x)
     str[i] = '\0';
     return str;
 }
+
+int divc(int n, int div){
+    return (n / div) + (mod(n, div) > 0);
+}
