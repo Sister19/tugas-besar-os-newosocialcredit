@@ -55,9 +55,16 @@ void readNodeFs(struct node_filesystem *node_fs_buffer) {
     readSector(&(node_fs_buffer->nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
 }
 
+void writeNodeFs(struct node_filesystem *node_fs_buffer) {
+    writeSector(&(node_fs_buffer->nodes[0]), FS_NODE_SECTOR_NUMBER);
+    writeSector(&(node_fs_buffer->nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+}
+
 byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, byte parent) {
     byte i;
     for (i = 0; i < 64; i++) {
+        // printString(itoa(node_fs_buffer->nodes[i].parent_node_index)); sp;
+        // printString(node_fs_buffer->nodes[i].name); endl;
         if (
             node_fs_buffer->nodes[i].parent_node_index == parent
             && strcmp(node_fs_buffer->nodes[i].name, name)
@@ -65,7 +72,7 @@ byte getNodeIdxFromParent(struct node_filesystem *node_fs_buffer, char* name, by
             return i;
         }
     }
-    return 64;
+    return IDX_NODE_UNDEF;
 }
 
 byte getNodeIdx(struct node_filesystem *node_fs_buffer, char* name) {
@@ -93,7 +100,6 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // Masukkan filesystem dari storage ke memori buffer
     readNodeFs(&node_fs_buffer);
     readSector(sector_fs_buffer.sector_list, FS_SECTOR_SECTOR_NUMBER);
-
     
     // 1. Cari node dengan nama dan lokasi yang sama pada filesystem.
     // Jika ditemukan node yang cocok, lanjutkan ke langkah ke-2.
@@ -103,14 +109,13 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // Asumsi metadata sudah terdefinisi dengan benar (masukan dari parameter valid)
     i = 0;
     while (i < 64 && !is_node_found){
-        if (strcmp(node_fs_buffer.nodes[i].name, metadata->node_name)){ // Nama node cocok
-            if (node_fs_buffer.nodes[i].parent_node_index == metadata->parent_index){ // Parent node cocok
-                is_node_found = true;
-            }
-        }
-        else {
+        if (
+            strcmp(node_fs_buffer.nodes[i].name, metadata->node_name) && // Nama node cocok
+            node_fs_buffer.nodes[i].parent_node_index == metadata->parent_index // Parent node cocok
+        )
+            is_node_found = true;
+        else
             i++;
-        }
     }
     
     if (!is_node_found){
@@ -124,29 +129,32 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // dan keluar.
     if (node_fs_buffer.nodes[i].sector_entry_index != FS_NODE_S_IDX_FOLDER) { // Node bertipe file
         // Pembacaan
-        // 1. memcpy() entry sector sesuai dengan byte S 
+        // 1. memcpy() entry sector sesuai dengan byte S
+        printString("copymem secnum");
         memcpy(
-            &sector_entry_buffer, // Menyimpan informasi entry sector dari node yang ditemukan
-            &(sector_fs_buffer.sector_list[node_fs_buffer.nodes[i].sector_entry_index]),
-            sizeof(struct sector_entry)
+            sector_entry_buffer.sector_numbers, // Menyimpan informasi entry sector dari node yang ditemukan
+            sector_fs_buffer.sector_list[node_fs_buffer.nodes[i].sector_entry_index].sector_numbers,
+            16
         );
-
+        printString("iterate sectors");
         // 2. Lakukan iterasi proses berikut, i = 0..15
         // 3. Baca byte entry sector untuk mendapatkan sector number partisi file
         // 4. Jika byte bernilai 0, selesaikan iterasi
+        j = 0;
         while (j < 16 && sector_entry_buffer.sector_numbers[j] != 0x00){
             clear(file_partition, 512);
             // 5. Jika byte valid, lakukan readSector()
-            readSector(file_partition,sector_entry_buffer.sector_numbers[j]);
+            readSector(file_partition, sector_entry_buffer.sector_numbers[j]);
             // dan masukkan kedalam buffer yang disediakan pada metadata
             memcpy(
-                &(metadata->buffer[j * 512]),
+                metadata->buffer + (j  * 512),
                 file_partition,
                 512
             );
             j++;
         } // 6. Lompat ke iterasi selanjutnya hingga iterasi selesai
         // 7. Tulis retcode FS_SUCCESS pada akhir proses pembacaan.
+        printString("vruh");
         *return_code = FS_SUCCESS;
         return;
 
@@ -183,14 +191,13 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     index_node = 0;
     is_node_found = false;
     while (index_node < 64 && !is_node_found){
-        if (strcmp(node_fs_buffer.nodes[index_node].name, metadata->node_name)){ // Nama node cocok
-            if (node_fs_buffer.nodes[index_node].parent_node_index == metadata->parent_index){ // Parent node cocok
-                is_node_found = true;
-            }
-        }
-        else {
+        if (
+            strcmp(node_fs_buffer.nodes[index_node].name, metadata->node_name) && // Nama node cocok
+            node_fs_buffer.nodes[index_node].parent_node_index == metadata->parent_index // Parent node cocok
+        )
+            is_node_found = true;
+        else
             index_node++;
-        }
     }
 
     if (is_node_found){
@@ -283,7 +290,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     //    FS_NODE_S_IDX_FOLDER dan lompat ke langkah ke-8
     // 3. Jika menulis file, tuliskan juga byte S sesuai indeks sector
     is_folder = false;
-    if (metadata->filesize == 0){
+    if (metadata->buffer == 0){
         node_fs_buffer.nodes[index_node].sector_entry_index = FS_NODE_S_IDX_FOLDER;
         is_folder = true;
     }
@@ -335,8 +342,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     // 8. Lakukan penulisan seluruh filesystem (map, node, sector) ke storage
     //    menggunakan writeSector() pada sektor yang sesuai
     writeSector(&(map_fs_buffer.is_filled[0]), FS_MAP_SECTOR_NUMBER);
-    writeSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
-    writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+    writeNodeFs(&node_fs_buffer);
     writeSector(sector_fs_buffer.sector_list, FS_SECTOR_SECTOR_NUMBER);
 
     // 9. Kembalikan retcode FS_SUCCESS

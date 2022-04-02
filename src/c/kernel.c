@@ -4,7 +4,7 @@ int main()
 {
     setVideoMode(VIDEO_MODE); // set video mode to 03
     fillMap(); // call fillMap function
-    //printTitle();
+    printTitle();
     shell();
 }
 

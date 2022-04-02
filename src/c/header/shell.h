@@ -8,22 +8,41 @@
 #include "screen.h"
 #include "kernel.h"
 
-#define MAX_ARGS 4
+extern char* __arg1;
+extern char* __arg2;
+extern char* __arg3;
+extern char* __arg4;
+extern char* args[MAX_ARGS];
+extern int arg_count;
 
-char __arg1[MAX_INPUT];
-char __arg2[MAX_INPUT];
-char __arg3[MAX_INPUT];
-char __arg4[MAX_INPUT];
-char* args[MAX_ARGS] = {__arg1, __arg2, __arg3, __arg4};
-int arg_count = 0;
+// global shell cwd
+extern byte current_dir;
+extern struct node_filesystem node_fs_buffer;
 
+// shell.c
 void printCWD();
-void parseArgs(char* args);
 void shell();
-void ls();
+
+// args.c
+extern byte arg_cdir;
+extern byte arg_ldir;
+extern char* name_temp;
+void parseArgs(char* input);
+void parsePathArg(char* path);
+bool checkIsDirectory(char* path, byte cdir);
+bool checkIsExist(char* path, byte cdir);
+
+// ls.c
+void ls(char* path);
+
+// cd.c
 void cd(char* path);
-void mkdir(char* fname);
-void cat(char* fname);
+
+// mkdir.c
+void mkdir(char* path);
+
+// cat.c
+void cat(char* path);
 
 
 #endif

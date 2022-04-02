@@ -56,7 +56,7 @@ struct sector_filesystem {
 
 // Struktur data untuk read / write
 struct file_metadata {
-    byte *buffer;
+    byte* buffer;
     char node_name[14];
     byte parent_index;
     unsigned int filesize;

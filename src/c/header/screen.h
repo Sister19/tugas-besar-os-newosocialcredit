@@ -44,5 +44,6 @@ void printString(char *string);
 void printStringColored(char *c, int warna);
 // Delete a character from the current cursor
 void deleteChar();
+void printTitle();
 
 #endif

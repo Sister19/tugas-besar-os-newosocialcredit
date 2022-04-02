@@ -115,38 +115,23 @@ void deleteChar()
     }
 }
 
-// void printTitle()
-// {
-//     printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("||  _   _               _____ _____        _____  ||", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("|| v.1.0.0                                        ||", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
+void printTitle()
+{
+    printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
+    printStringColored("||  _   _               _____ _____        _____  ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|| v.1.0.0                                        ||", COLOR_LIGHT_GREEN); endl;
+    printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
 
-//     printStringColored("A IF2230 Milestone 1 Project made by:", COLOR_YELLOW); endl;
-//     printStringColored("- 13520103 - Amar Fadil", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("- 13520124 - Owen Christian Wijaya", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("- 13520139 - Fachry Dennis Heraldi", COLOR_LIGHT_GREEN); endl;
-//     printStringColored("Type 'help' to show the help menu!", COLOR_LIGHT_CYAN); endl;
+    printStringColored("A IF2230 Milestone 1 Project made by:", COLOR_YELLOW); endl;
+    printStringColored("- 13520103 - Amar Fadil", COLOR_LIGHT_GREEN); endl;
+    printStringColored("- 13520124 - Owen Christian Wijaya", COLOR_LIGHT_GREEN); endl;
+    printStringColored("- 13520139 - Fachry Dennis Heraldi", COLOR_LIGHT_GREEN); endl;
+    printStringColored("Type 'help' to show the help menu!", COLOR_LIGHT_CYAN); endl;
 
-//     endl;endl;
-// }
-
-// void help(){
-//     endl;endl;
-//     printString("==========================================================="); endl;
-//     printString("|                      HELP MENU                          |"); endl;
-//     printString("|                                                         |"); endl;
-//     printString("| 1. rw: Protocol to read a string and write it           |"); endl;
-//     printString("| on the screen.                                          |"); endl;
-//     printString("| 2. cls: Clear the screen and reset buffer color         |"); endl;
-//     printString("| to white.                                               |"); endl;
-//     printString("| 3. help: Show this help menu.                           |"); endl;
-//     printString("|                                                         |"); endl;
-//     printString("==========================================================="); endl;
-//     endl;
-// }
+    endl;endl;
+}
