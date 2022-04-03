@@ -1,10 +1,7 @@
-# Tugas Besar IF2230 - Sistem Operasi
+# NewOS: Tugas Besar IF2230 - Sistem Operasi 
 
-> Milestone 1 : 1 Maret 2022
->
-> - Pembuatan Sistem Operasi Sederhana: Booting, Kernel, dan System Call
->   Milestone 2 : 5 April 2022
-> - Pembuatan Filesystem dan Shell Sederhana
+> - Milestone 1 : 1 Maret 2022 - Pembuatan Sistem Operasi Sederhana: Booting, Kernel, dan System Call
+> - Milestone 2 : 5 April 2022 - Pembuatan Filesystem dan Shell Sederhana
 
 ## Deskripsi
 
