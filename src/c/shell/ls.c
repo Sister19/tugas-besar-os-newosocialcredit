@@ -24,5 +24,7 @@ void ls(char* path){
     }
     if (cnt > 0){
         endl;
+    } else {
+        printStringColored("Directory empty.", COLOR_LIGHT_RED); endl;
     }
 }

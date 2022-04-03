@@ -118,21 +118,28 @@ void deleteChar()
 
 void printTitle()
 {
-    // printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("||  _   _               _____ _____        _____  ||", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("|| v.1.0.0                                        ||", COLOR_LIGHT_GREEN); endl;
-    // printStringColored("====================================================", COLOR_LIGHT_GREEN); endl;
-
-    printStringColored("A IF2230 Milestone 1 Project made by:", COLOR_YELLOW); endl;
-    printStringColored("- 13520103 - Amar Fadil", COLOR_LIGHT_GREEN); endl;
-    printStringColored("- 13520124 - Owen Christian Wijaya", COLOR_LIGHT_GREEN); endl;
-    printStringColored("- 13520139 - Fachry Dennis Heraldi", COLOR_LIGHT_GREEN); endl;
-    printStringColored("Type 'help' to show the help menu!", COLOR_LIGHT_CYAN); endl;
+    printStringColored("      ___       __   __  ", COLOR_LIGHT_GREEN); endl;
+    printStringColored("|\\ | |__  |  | /  \\ /__` ", COLOR_LIGHT_GREEN); endl;
+    printStringColored("| \\| |___ |/\\| \\__/ .__/ ", COLOR_LIGHT_GREEN); endl;
+    printStringColored("v.2.0.0  - Milestone 2 Project", COLOR_LIGHT_GREEN); endl;
 
     endl;endl;
 }
+
+// void help()
+// {
+//     endl;
+//     printStringColored("cd <DEST>", COLOR_LIGHT_CYAN);
+//     printString("- Moves current working directory to destination path"); endl;
+//     printStringColored("ls", COLOR_LIGHT_CYAN);
+//     printString(" - Displays content of current directory"); endl;
+//     printStringColored("mv <FILE> <DEST_PATH>", COLOR_LIGHT_CYAN);
+//     printString(" - Moves a file to destination path"); endl;
+//     printStringColored("mkdir <DIR_NAME>", COLOR_LIGHT_CYAN);
+//     printString(" - Creates a new directory in current working directory"); endl;
+//     printStringColored("cat <FILE>", COLOR_LIGHT_CYAN);
+//     printString(" - Prints the content of a file"); endl;
+//     printStringColored("cp <FILE> <DEST_PATH> / <NEW_NAME>", COLOR_LIGHT_CYAN);
+//     printString(" - Copies a file to a path or to the same path with different name"); endl;
+//     endl;
+// }

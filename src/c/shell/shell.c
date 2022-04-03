@@ -2,11 +2,11 @@
 
 void _printCWDRec(byte dir) {
     if (dir == FS_NODE_P_IDX_ROOT) {
-        printCharColored('/', COLOR_LIGHT_GREEN);
+        printCharColored('/', COLOR_LIGHT_CYAN);
     } else {
         _printCWDRec(node_fs_buffer.nodes[dir].parent_node_index);
-        printStringColored(node_fs_buffer.nodes[dir].name, COLOR_LIGHT_GREEN);
-        printCharColored('/', COLOR_LIGHT_GREEN);
+        printStringColored(node_fs_buffer.nodes[dir].name, COLOR_LIGHT_CYAN);
+        printCharColored('/', COLOR_LIGHT_CYAN);
     }
 }
 
@@ -29,8 +29,9 @@ void shell() {
     int i;
     while (true) {
         makeInterrupt21();
+        printStringColored("NewOS:", COLOR_LIGHT_GREEN);
         printCWD();
-        printStringColored(" >> ", COLOR_LIGHT_BLUE);
+        printString(" >> ");
         readString(input_buf);
         parseArgs(input_buf);
         endl;
