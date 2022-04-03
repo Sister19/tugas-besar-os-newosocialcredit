@@ -81,13 +81,13 @@ Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula
    ```
 
    Kompilasi Makefile akan berjalan, dan apabila muncul _prompt_ dari `bochs`, tekan 'c' untuk melanjutkan.
+   
+   Untuk melakukan kompilasi menggunakan _testcase_ dari _folder_ `tc_gen`, lakukan urutan langkah berikut ini:
+   1. Pada `makefile -> tc:`, ubah nilai karakter pada `./tc_gen/tc_gen <KARAKTER>`. Misalkan ingin menjalankan _testcase_ A, ubah menjadi `./tc_gen/tc_gen A`.
+   2. Jalankan perintah `make tc-run`, tekan `c` pada `bochs` lalu matikan OS.
+   3. Kompilasi akan berlanjut dengan memasukkan _testcase_ pada `system.img`, dan setelah itu, OS akan terbuka lagi.
 
-3. OS akan tampil di layar emulator Bochs. Alur kerja OS adalah sebagai berikut:
-   - OS menerima tiga buah _command_:
-     - `rw` (read/write), menjalankan protokol pembacaan _string_, kemudian menampilkan kembali _string_ tersebut ke layar
-     - `cls` (clear screen), membersihkan layar dan mengubah warna _buffer_ menjadi putih
-     - `help`, menampilkan menu _help_
-   - _Command_ `rw` adalah implementasi dari fungsi `readString/printString`, dan _command_ `cls` adalah implementasi dari fungsi `clearScreen`
+3. OS akan tampil di layar emulator Bochs. Pengguna dapat menggunakan utilitas-utilitas yang disediakan!
 
 ### Identitas
 
