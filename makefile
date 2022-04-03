@@ -1,4 +1,9 @@
-all: diskimage bootloader kernel
+all: clear diskimage bootloader kernel apps
+clear:
+	rm -r -f out
+	mkdir out
+	mkdir out/apps
+	mkdir out/system
 tc:
 	gcc tc_gen/tc_gen.c tc_gen/tc_lib -o tc_gen/tc_gen
 	./tc_gen/tc_gen D
@@ -9,25 +14,33 @@ bootloader:
 	nasm src/asm/bootloader.asm -o out/bootloader
 	dd if=out/bootloader of=out/system.img bs=512 count=1 conv=notrunc
 stdlib:
-	bcc -ansi -c -O1 -o out/std_lib.o src/c/std_lib.c
-shell:
-	bcc -ansi -c -O1 -o out/shell/global.o src/c/shell/global.c
-	bcc -ansi -c -O1 -o out/shell/shell.o src/c/shell/shell.c
-	bcc -ansi -c -O1 -o out/shell/args.o src/c/shell/args.c
-	bcc -ansi -c -O1 -o out/shell/mkdir.o src/c/shell/mkdir.c
-	bcc -ansi -c -O1 -o out/shell/cat.o src/c/shell/cat.c
-	bcc -ansi -c -O1 -o out/shell/cd.o src/c/shell/cd.c
-	bcc -ansi -c -O1 -o out/shell/ls.o src/c/shell/ls.c
-	bcc -ansi -c -O1 -o out/shell/mv.o src/c/shell/mv.c
-	bcc -ansi -c -O1 -o out/shell/cp.o src/c/shell/cp.c
+	bcc -ansi -c -o out/std_lib.o src/c/std_lib.c
+apps: stdlib
+	# bcc -ansi -c -o out/apps/mkdir.o src/c/apps/mkdir.c
+	# bcc -ansi -c -o out/apps/cat.o src/c/apps/cat.c
+	# bcc -ansi -c -o out/apps/cd.o src/c/apps/cd.c
+	# bcc -ansi -c -o out/apps/ls.o src/c/apps/ls.c
+	# bcc -ansi -c -o out/apps/mv.o src/c/apps/mv.c
+	# bcc -ansi -c -o out/apps/cp.o src/c/apps/cp.c
+	# bcc -ansi -c -o out/apps/shell.o src/c/apps/shell.c
+	# bcc -ansi -c -o out/apps/args.o src/c/apps/args.c
+	bcc -ansi -c -O3 -o out/syscall.o src/c/syscall.c
+	# ld86 -o out/apps/utility -d out/syscall.o out/interrupt.o out/std_lib.o out/apps/*.o
+	# bcc -ansi -S -o out/apps/test.s src/c/apps/test.c
+	bcc -ansi -c -O3 -o out/apps/test.o src/c/apps/test.c
+	bcc -ansi -c -O3 -o out/apps/global.o src/c/apps/global.c
+	ld86 -o out/apps/utility -d out/interrupt.o out/syscall.o out/apps/test.o out/apps/global.o
+	dd if=out/apps/utility of=out/system.img bs=512 conv=notrunc seek=272
 system:
-	bcc -ansi -c -O1 -o out/system/screen.o src/c/screen.c
-	bcc -ansi -c -O1 -o out/system/keyboard.o src/c/keyboard.c
-	bcc -ansi -c -O1 -o out/system/filesystem.o src/c/filesystem.c
-kernel: stdlib system shell
-	bcc -ansi -c -O1 -o out/kernel.o src/c/kernel.c
+	bcc -ansi -c -O3 -o out/system/screen.o src/c/system/screen.c
+	bcc -ansi -c -O3 -o out/system/keyboard.o src/c/system/keyboard.c
+	bcc -ansi -c -O3 -o out/system/filesystem.o src/c/system/filesystem.c
+kernel: stdlib system
+	bcc -ansi -c -O3 -o out/global.o src/c/global.c
+	bcc -ansi -c -O3 -o out/kernel.o src/c/kernel.c
+	nasm -f as86 src/asm/interrupt.asm -o out/interrupt.o
 	nasm -f as86 src/asm/kernel.asm -o out/kernel_asm.o
-	ld86 -o out/kernel -d out/kernel.o out/kernel_asm.o out/std_lib.o out/system/*.o out/shell/*.o
+	ld86 -o out/kernel -d out/kernel.o out/interrupt.o out/kernel_asm.o out/std_lib.o out/global.o out/system/*.o
 	dd if=out/kernel of=out/system.img bs=512 conv=notrunc seek=1
 run:
 	bochs -f src/config/if2230.config || true

@@ -1,14 +1,13 @@
 #ifndef __INTERRUPT_H
 #define __INTERRUPT_H
 
-// REGISTERS
-int AX, BX, CX, DX;
 // REGISTERS HELPER UNIT
 #define REG_H(r) (r >> 8)
 #define REG_L(r) (r & 0xFF)
 #define REG(h, l) ((h << 8) + l)
 // INTERRUPTS ROUTINE
-#define intr(n, a, b, c, d) AX = a; BX = b; CX = c; DX = d; interrupt(n, &AX, &BX, &CX, &DX);
+#define intr(n, a, b, c, d) interrupt(n, a, b, c, d);
+extern int interrupt(int int_number, int a, int b, int c, int d);
 
 // MEMORY SEGMENT & ADDRESSING
 // Video segment

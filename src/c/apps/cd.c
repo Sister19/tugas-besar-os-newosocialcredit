@@ -1,4 +1,4 @@
-#include "../header/shell.h"
+#include "../header/utility.h"
 
 void cd(char* path) {
     parsePathArg(path);

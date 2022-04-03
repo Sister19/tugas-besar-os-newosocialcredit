@@ -1,9 +1,10 @@
-#include "header/screen.h"
-#include "header/keyboard.h"
+#include "../header/screen.h"
+#include "../header/keyboard.h"
+#include "../header/global.h"
 
 void getCursor()
 {
-    intr(INT_VIDEO, AX_VIDEO_GETCURSOR, 0, 0, 0);
+    int DX = getCursorPos();
     cursorX = REG_L(DX);
     cursorY = REG_H(DX);
 }

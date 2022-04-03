@@ -9,6 +9,9 @@
         "constant.h": "c",
         "all_headers.h": "c",
         "shell.h": "c",
-        "screen.h": "c"
+        "screen.h": "c",
+        "global.h": "c",
+        "utility.h": "c",
+        "kernel.h": "c"
     }
 }
