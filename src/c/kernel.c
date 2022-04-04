@@ -6,22 +6,20 @@
 
 int main()
 {
-    int i = 0;
-    byte buffer[8192];
-    clear(buffer, 8192);
-    for (i = 0; i < 16; i++) {
-        readSector(buffer + 512 * i, 0x110 + i);
-    }
-    for (i = 0; i < 8192; i++) {
-        putInMemory(0x2000, i, buffer[i]);
-    }
+    int i = 0, j = 0;
+    byte buffer[512];
     setVideoMode(VIDEO_MODE); // set video mode to 03
     printTitle();
+    for (i = 0; i < 16; i++) {
+        readSector(buffer, 0x110 + i);
+        for (j = 0; j < 512; j++) {
+            putInMemory(0x2000, i * 512 + j, buffer[j]);
+        }
+    }
     fillMap(); // call fillMap function
     makeInterrupt21();
-    printString("yes!");
     exec(0x2000);
-    return 0;
+    while(true);
 }
 
 void handleInterrupt21(int ax, int bx, int cx, int dx) {
@@ -61,6 +59,12 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
         case 0x4: // screen manipulation
             if (dx == 0)
                 clearScreen();
+            break;
+        case 0x5: // mouse manipulation
+            if (dx == 0)
+                ax = getCursorPos();
+            else if (dx == 1)
+                setCursor(bx, cx);
             break;
         default:
             printString("Invalid Interrupt");

@@ -4,10 +4,10 @@
 
 ;kernel.asm contains assembly functions that you can use in your kernel
 
-global _exec
 global _getCursorPos
 global _putInMemory
 global _makeInterrupt21
+global _exec
 extern _handleInterrupt21
 
 _exec:
@@ -29,7 +29,6 @@ _exec:
 	mov ax,0xfff0
 	mov sp,ax
 	mov bp,ax
-
 launch: jmp 0:0
 
 ;void putInMemory (int segment, int address, byte b)

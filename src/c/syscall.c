@@ -1,13 +1,12 @@
 #include "header/syscall.h"
 #include "header/constant.h"
-#include "header/interrupt.h"
 
 // 0x0
 void printLines(char* buf) {
     intr(0x21, 0x00, buf, 0, 1);
 }
 void printStringColored(char *buf, int col) {
-    intr(0x21, 0x00, buf, 0, 2);
+    intr(0x21, 0x00, buf, col, 2);
 }
 void printString(char *buf){
     intr(0x21, 0x00, buf, 0, 3);

@@ -24,12 +24,13 @@ apps: stdlib
 	# bcc -ansi -c -o out/apps/cp.o src/c/apps/cp.c
 	# bcc -ansi -c -o out/apps/shell.o src/c/apps/shell.c
 	# bcc -ansi -c -o out/apps/args.o src/c/apps/args.c
-	bcc -ansi -c -O3 -o out/syscall.o src/c/syscall.c
-	# ld86 -o out/apps/utility -d out/syscall.o out/interrupt.o out/std_lib.o out/apps/*.o
-	# bcc -ansi -S -o out/apps/test.s src/c/apps/test.c
-	bcc -ansi -c -O3 -o out/apps/test.o src/c/apps/test.c
-	bcc -ansi -c -O3 -o out/apps/global.o src/c/apps/global.c
-	ld86 -o out/apps/utility -d out/interrupt.o out/syscall.o out/apps/test.o out/apps/global.o
+	# bcc -ansi -c -o out/syscall.o src/c/syscall.c
+	# ld86 -o out/apps/utility -d out/apps/shell.o out/syscall.o out/interrupt.o
+
+	#bcc -ansi -S -o out/apps/test.s src/c/apps/test.c
+	bcc -ansi -c -o out/apps/test.o src/c/apps/test.c
+	bcc -ansi -c -o out/syscall.o src/c/syscall.c
+	ld86 -o out/apps/utility -d out/apps/*.o out/std_lib.o out/syscall.o out/interrupt.o
 	dd if=out/apps/utility of=out/system.img bs=512 conv=notrunc seek=272
 system:
 	bcc -ansi -c -O3 -o out/system/screen.o src/c/system/screen.c
@@ -40,7 +41,7 @@ kernel: stdlib system
 	bcc -ansi -c -O3 -o out/kernel.o src/c/kernel.c
 	nasm -f as86 src/asm/interrupt.asm -o out/interrupt.o
 	nasm -f as86 src/asm/kernel.asm -o out/kernel_asm.o
-	ld86 -o out/kernel -d out/kernel.o out/interrupt.o out/kernel_asm.o out/std_lib.o out/global.o out/system/*.o
+	ld86 -o out/kernel -d out/kernel.o out/kernel_asm.o out/std_lib.o out/global.o out/system/*.o out/interrupt.o
 	dd if=out/kernel of=out/system.img bs=512 conv=notrunc seek=1
 run:
 	bochs -f src/config/if2230.config || true

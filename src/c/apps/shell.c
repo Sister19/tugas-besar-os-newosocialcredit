@@ -41,7 +41,7 @@ int main() {
     // while (true){
     char input_buf[MAX_INPUT];
     int i;
-    intr(0x21, 0x0, "amer", 0, 3);
+    printString(">> ");
     while(1);
     // while (true) {
     //     printStringColored("NewOS:", COLOR_LIGHT_GREEN);

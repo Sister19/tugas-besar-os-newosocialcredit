@@ -5,9 +5,10 @@
 #include "struct_fs.h"
 #include "std_type.h"
 #include "std_lib.h"
+#include "interrupt.h"
 
 // Write endline
-#define endl printChar(nullt)
+#define endl printChar('\n')
 // Write new space
 #define sp printChar(' ')
 

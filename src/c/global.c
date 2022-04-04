@@ -5,8 +5,6 @@ struct node_filesystem node_fs_buffer;
 struct map_filesystem map_fs_buffer;
 struct sector_filesystem sector_fs_buffer;
 
-char input_buf[MAX_INPUT];
-
 char __hist0[MAX_INPUT];
 char __hist1[MAX_INPUT];
 char __hist2[MAX_INPUT];

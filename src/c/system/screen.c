@@ -35,6 +35,7 @@ void forwardCursor() {
 }
 
 void backwardCursor() {
+    intr(0x21, 0x5, 0, 0, 0);
     getCursor();
     if (cursorX == 0) // already leftmost
         setCursor(MAX_CURSOR_X, cursorY - 1);
