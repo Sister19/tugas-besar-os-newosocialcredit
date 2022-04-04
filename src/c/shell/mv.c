@@ -16,7 +16,10 @@ void mv(char* path1, char* path2) {
                 writeNodeFs(&node_fs_buffer);
             }
         } else { // dest is exist, we just move the directory.
-            if (isDirectory(arg_cdir)) { 
+            if (
+                isDirectory(arg_cdir)
+                && getNodeIdxFromParent(node_fs_buffer.nodes[cdir1].name, arg_cdir) == IDX_NODE_UNDEF
+            ) { 
                 node_fs_buffer.nodes[cdir1].parent_node_index = arg_cdir;
                 writeNodeFs(&node_fs_buffer);
             } else { // if dest is a file, we can't move it.

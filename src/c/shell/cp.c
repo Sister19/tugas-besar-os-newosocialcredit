@@ -43,10 +43,13 @@ void cp(char* path1, char* path2){
                 strcpy(metadata.node_name, name_temp);
                 metadata.parent_index = ldir2;
                 write(&metadata, &ret); 
-                ret_output(ret);
+                ret_output(&ret);
             }
         } else {
-            if (isDirectory(cdir2)){
+            if (
+                isDirectory(cdir2)
+                && getNodeIdxFromParent(node_fs_buffer.nodes[cdir1].name, arg_cdir) == IDX_NODE_UNDEF
+            ) {
                 metadata.parent_index = cdir2;
                 write(&metadata, &ret);
                 ret_output(&ret);
