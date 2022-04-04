@@ -1,15 +1,19 @@
 #include "../header/shell.h"
 
-void mkdir(char* path){
+enum fs_retcode createFolder(byte parent, char* name) {
     struct file_metadata metadata;
     enum fs_retcode ret;
+    metadata.parent_index = parent;
+    metadata.buffer = 0;
+    strcpy(metadata.node_name, name);
+    write(&metadata, &ret);
+    return ret;
+}
+
+void mkdir(char* path){
     parsePathArg(path);
     if (checkIsExist(path, arg_ldir) && checkIsDirectory(path, arg_ldir)) {
-        metadata.parent_index = arg_ldir;
-        metadata.buffer = 0;
-        strcpy(metadata.node_name, name_temp);
-        write(&metadata, &ret);
-        switch (ret)
+        switch (createFolder(arg_ldir, name_temp))
         {
             case FS_SUCCESS:
                 printString("Directory created successfully.\n");

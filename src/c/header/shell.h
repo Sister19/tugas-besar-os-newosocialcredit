@@ -36,6 +36,8 @@ void ls(char* path);
 void cd(char* path);
 
 // mkdir.c
+enum fs_retcode createFolder(byte parent, char* name);
+enum fs_retcode cpFile(byte from, byte to, char* last_name, char* current_name);
 void mkdir(char* path);
 
 // cat.c
