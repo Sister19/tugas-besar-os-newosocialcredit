@@ -64,7 +64,7 @@ void shell() {
             if (__checkArgCount(3))
                 cp(args[1], args[2]);
         } else {
-            printString("Unknown command\n"); 
+            printStringColored("Unknown command!\n", COLOR_LIGHT_RED); 
         }
     }
 }

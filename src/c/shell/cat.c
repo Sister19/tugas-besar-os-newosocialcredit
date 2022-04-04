@@ -16,7 +16,7 @@ void cat(char* path) {
                 printLines(metadata.buffer);
                 break;
             default:
-                printString("Error\n");
+                printStringColored("Error reading file!\n", COLOR_LIGHT_RED);
                 break;
         }
     }

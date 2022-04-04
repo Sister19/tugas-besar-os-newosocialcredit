@@ -3,10 +3,10 @@
 void ret_output(enum fs_retcode* ret){
     switch (*ret){
         case FS_SUCCESS:
-            printString("Copy success!\n");
+            printString("Copy success.\n");
             break;
         case FS_W_NOT_ENOUGH_STORAGE:
-            printStringColored("Error: Not enough storage to do copying!\n", COLOR_LIGHT_RED);
+            printStringColored("Error: Not enough storage to do copying.\n", COLOR_LIGHT_RED);
             break;
         default:
             printString("Error\n");

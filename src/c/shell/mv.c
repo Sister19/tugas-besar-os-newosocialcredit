@@ -14,6 +14,7 @@ void mv(char* path1, char* path2) {
                 // we move it to new parent (arg_ldir)
                 node_fs_buffer.nodes[cdir1].parent_node_index = arg_ldir;
                 writeNodeFs(&node_fs_buffer);
+                printString("Move success.\n");
             }
         } else { // dest is exist, we just move the directory.
             if (
@@ -22,6 +23,7 @@ void mv(char* path1, char* path2) {
             ) { 
                 node_fs_buffer.nodes[cdir1].parent_node_index = arg_cdir;
                 writeNodeFs(&node_fs_buffer);
+                printString("Move success.\n");
             } else { // if dest is a file, we can't move it.
                 if (isDirectory(cdir1))
                     printString("Can't move directory into file.\n");
