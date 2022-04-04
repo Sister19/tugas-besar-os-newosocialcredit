@@ -1,7 +1,7 @@
 #include "header/keyboard.h"
 #include "header/screen.h"
 
-void readKey(char* scancode, char* key) {
+void readKey(int* scancode, int* key) {
     intr(INT_KEYBOARD, AX_KEYBOARD_READ, 0, 0, 0);
     *scancode = REG_H(AX);
     *key = REG_L(AX);
@@ -24,6 +24,39 @@ void changeHistory(char* buffer, bool down) {
     index = len;
 }
 
+void printLines(char *buffer)
+{
+    int input, scancode, i;
+    char* enter = "Press ENTER to next or CTRL+C to exit...";
+    bool is_stop = false;
+    i = 0;
+    while (buffer[i]) {
+        if (buffer[i] == '\n') {
+            endl;
+            printStringColored(enter, 0xF0);
+            while(true) {
+                readKey(&scancode, &input);
+                if (input == KEY_CR || input == KEY_LF) {
+                    break;
+                } else if (scancode == SC_CTRL && input == 0x3) {
+                    is_stop = true;
+                    break;
+                }
+            }
+            input = 0;
+            while (enter[input++]) {
+                printChar(KEY_BKSP);
+            }
+            if (is_stop)
+                return;
+        } else {
+            printChar(buffer[i]);
+        }
+        i++;
+    }
+    endl;
+}
+
 void readString(char *buffer)
 {
     int i = 0;
@@ -38,9 +71,8 @@ void readString(char *buffer)
     while (true)
     {
         // get interrupt for 0x16 (used to scan keyboard input)
-        intr(INT_KEYBOARD, AX_KEYBOARD_READ, 0, 0, 0);
-        input = REG_L(AX); scancode = REG_H(AX);
-        //printString(itoa(input)); sp; printString(itoa(scancode)); endl;
+        readKey(&scancode, &input);
+        // printString(itoa(input)); sp; printString(itoa(scancode)); endl;
         // if l/r arrow key, we match the cursor
         if (scancode == SC_LARROW && index > 0) {
             --index;

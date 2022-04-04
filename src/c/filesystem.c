@@ -1,5 +1,4 @@
 #include "header/filesystem.h"
-#include "header/screen.h"
 
 void readSector(byte* buffer, int sector_number){
     int sector_read_count = 0x01;
@@ -50,12 +49,12 @@ void fillMap(){
 }
 
 void readNodeFs() {
-    readSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+    readSector(node_fs_buffer.nodes, FS_NODE_SECTOR_NUMBER);
     readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
 }
 
 void writeNodeFs() {
-    writeSector(&(node_fs_buffer.nodes[0]), FS_NODE_SECTOR_NUMBER);
+    writeSector(node_fs_buffer.nodes, FS_NODE_SECTOR_NUMBER);
     writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
 }
 
@@ -72,16 +71,6 @@ byte getNodeIdxFromParent(char* name, byte parent) {
     return IDX_NODE_UNDEF;
 }
 
-byte getNodeIdx(char* name) {
-    byte i;
-    for (i = 0; i < 64; i++) {
-        if (strcmp(node_fs_buffer.nodes[i].name, name)) {
-            return i;
-        }
-    }
-    return 64;
-}
-
 void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // Tambahkan tipe data yang dibutuhkan
     struct node_entry        node_buffer;
@@ -90,7 +79,6 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     
     int i = 0;
     int j = 0;
-    bool is_node_found = false;
 
     // Masukkan filesystem dari storage ke memori buffer
     readNodeFs(&node_fs_buffer);
@@ -102,18 +90,8 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // dan keluar.
 
     // Asumsi metadata sudah terdefinisi dengan benar (masukan dari parameter valid)
-    i = 0;
-    while (i < 64 && !is_node_found){
-        if (
-            strcmp(node_fs_buffer.nodes[i].name, metadata->node_name) && // Nama node cocok
-            node_fs_buffer.nodes[i].parent_node_index == metadata->parent_index // Parent node cocok
-        )
-            is_node_found = true;
-        else
-            i++;
-    }
-    
-    if (!is_node_found){
+    i = getNodeIdxFromParent(metadata->node_name, metadata->parent_index);
+    if (i == IDX_NODE_UNDEF){
         *return_code = FS_R_NODE_NOT_FOUND;
         return;
     }
@@ -170,7 +148,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     bool is_folder;
     
     // Masukkan filesystem dari storage ke memori
-    readSector(&(map_fs_buffer.is_filled[0]), FS_MAP_SECTOR_NUMBER);
+    readSector(map_fs_buffer.is_filled, FS_MAP_SECTOR_NUMBER);
     readNodeFs(&node_fs_buffer);
     readSector(sector_fs_buffer.sector_list, FS_SECTOR_SECTOR_NUMBER);
     
@@ -178,19 +156,9 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     //    Jika tidak ditemukan kecocokan, lakukan proses ke-2.
     //    Jika ditemukan node yang cocok, tuliskan retcode 
     //    FS_W_FILE_ALREADY_EXIST dan keluar. 
-    index_node = 0;
-    is_node_found = false;
-    while (index_node < 64 && !is_node_found){
-        if (
-            strcmp(node_fs_buffer.nodes[index_node].name, metadata->node_name) && // Nama node cocok
-            node_fs_buffer.nodes[index_node].parent_node_index == metadata->parent_index // Parent node cocok
-        )
-            is_node_found = true;
-        else
-            index_node++;
-    }
+    index_node = getNodeIdxFromParent(metadata->node_name, metadata->parent_index);
 
-    if (is_node_found){
+    if (index_node != IDX_NODE_UNDEF){
         *return_code = FS_W_FILE_ALREADY_EXIST;
         return;
     }
@@ -202,7 +170,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     index_node = 0;
     is_node_found = false;
     while (index_node < 64 && !is_node_found){ // Node yang kosong adalah jika nama node kosong 
-        if (strlen(node_fs_buffer.nodes[index_node].name) == 0){ // Nama node kosong
+        if (node_fs_buffer.nodes[index_node].name[0] == '\0'){ // Nama node kosong
             is_node_found = true; // Node kosong ditemukan, informasi indeksnya adalah index_node
         }
         else {
@@ -330,7 +298,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     
     // 8. Lakukan penulisan seluruh filesystem (map, node, sector) ke storage
     //    menggunakan writeSector() pada sektor yang sesuai
-    writeSector(&(map_fs_buffer.is_filled[0]), FS_MAP_SECTOR_NUMBER);
+    writeSector(map_fs_buffer.is_filled, FS_MAP_SECTOR_NUMBER);
     writeNodeFs(&node_fs_buffer);
     writeSector(sector_fs_buffer.sector_list, FS_SECTOR_SECTOR_NUMBER);
 

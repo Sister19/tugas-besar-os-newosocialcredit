@@ -23,7 +23,7 @@ _putInMemory:
 	pop bp
 	ret
 
-;int interrupt (int number, int *AX, int *BX, int *CX, int *DX)
+;int interrupt (int number, int *regs)
 _interrupt:
 	push bp
 	mov bp,sp
@@ -37,23 +37,17 @@ _interrupt:
 	; pass by reference those sweet parameters
 	mov si,[bp+6]	;get the other parameters AX, BX, CX, and dx
 	mov ax,[si]
-	mov si,[bp+8]
-	mov bx,[si]
-	mov si,[bp+10]
-	mov cx,[si]
-	mov si,[bp+12]
-	mov dx,[si]
+	mov bx,[si+2]
+	mov cx,[si+4]
+	mov dx,[si+6]
 
 intr:	int 0x00	;call the interrupt (00 will be changed above)
 
 	mov si,[bp+6]	;put parameters AX, BX, CX, and DX back
 	mov [si],ax
-	mov si,[bp+8]
-	mov [si],bx
-	mov si,[bp+10]
-	mov [si],cx
-	mov si,[bp+12]
-	mov [si],dx
+	mov [si+2],bx
+	mov [si+4],cx
+	mov [si+6],dx
 	pop bp
 	ret
 

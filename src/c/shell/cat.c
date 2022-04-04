@@ -13,14 +13,8 @@ void cat(char* path) {
         switch (ret)
         {
             case FS_SUCCESS:
-                printString(metadata.buffer); endl;
+                printLines(metadata.buffer);
                 break;
-            // case FS_R_NODE_NOT_FOUND:
-            //     printStringColored("Error: The file you're looking for doesn't exist!\n", COLOR_LIGHT_RED);
-            //     break;
-            // case FS_R_TYPE_IS_FOLDER:
-            //     printStringColored("Error: You're trying to read a folder!\n", COLOR_LIGHT_RED);
-            //     break;
             default:
                 printString("Error\n");
                 break;

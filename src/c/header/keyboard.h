@@ -30,7 +30,8 @@ extern int firstCursorX, firstCursorY, lastCursorX, lastCursorY;
 extern char* history[MAX_HIST];
 extern int hist_length;
 
+void printLines(char *buffer);
 void readString(char* buffer);
-void readKey(char* scancode, char* key);
+void readKey(int* scancode, int* key);
 
 #endif

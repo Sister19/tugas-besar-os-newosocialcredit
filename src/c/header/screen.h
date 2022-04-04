@@ -35,8 +35,6 @@ void setCursor(int x, int y);
 void forwardCursor();
 // Backward the cursor
 void backwardCursor();
-// Set screen video mode
-void setVideoMode(int mode);
 // Clear the screen
 void clearScreen();
 // Print a character into the screen

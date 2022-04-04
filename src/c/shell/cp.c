@@ -1,15 +1,16 @@
 #include "../header/shell.h"
 
-void ret_output(enum fs_retcode ret){
-    switch (ret){
+void ret_output(enum fs_retcode* ret){
+    switch (*ret){
         case FS_SUCCESS:
             printString("Copy success!\n");
             break;
         case FS_W_NOT_ENOUGH_STORAGE:
             printStringColored("Error: Not enough storage to do copying!\n", COLOR_LIGHT_RED);
-        // default:
-        //     printString("Error\n");
-        //     break;
+            break;
+        default:
+            printString("Error\n");
+            break;
     }
 }
 
@@ -48,7 +49,7 @@ void cp(char* path1, char* path2){
             if (isDirectory(cdir2)){
                 metadata.parent_index = cdir2;
                 write(&metadata, &ret);
-                ret_output(ret);
+                ret_output(&ret);
             } else {
                 if (isDirectory(cdir1))
                     printStringColored("Can't copy directory into file.\n", COLOR_LIGHT_RED);
