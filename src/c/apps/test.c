@@ -5,7 +5,7 @@
 int main() {
     char buffer[MAX_INPUT];
     while (true) {
-        //printStringColored(">> ", COLOR_GREEN);
+        printStringColored(">> ", COLOR_GREEN);
         readString(buffer); endl;
         printString(buffer); endl;
     }

@@ -2,7 +2,6 @@
 #define UTILITY_H
 
 #include "syscall.h"
-
 extern char* args[MAX_ARGS];
 extern int arg_count;
 
@@ -34,6 +33,7 @@ void mv(char* path1, char* path2);
 void ret_output(enum fs_retcode ret);
 void cp(char* path1, char* path2);
 
+// args.c
 bool isDirectory(byte cdir);
 bool checkIsFile(char* path, byte cdir);
 bool checkIsDirectory(char* path, byte cdir);

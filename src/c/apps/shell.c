@@ -41,43 +41,41 @@ int main() {
     // while (true){
     char input_buf[MAX_INPUT];
     int i;
-    printString(">> ");
-    while(1);
-    // while (true) {
-    //     printStringColored("NewOS:", COLOR_LIGHT_GREEN);
-    //     printCWD();
-    //     printString(" >> ");
-    //     readString(input_buf);
-    //     parseArgs(input_buf);
-    //     endl;
-    //     if (arg_count > MAX_ARGS) {
-    //         printString("Too many arguments\n");
-    //         continue;
-    //     } else if (arg_count == 0) {
-    //         continue;
-    //     }
-    //     if (strcmp(args[0], "ls")) {
-    //         if (arg_count > 1)
-    //             ls(args[1]);
-    //         else
-    //             ls(0);
-    //     } else if (strcmp(args[0], "mkdir")) {
-    //         if (__checkArgCount(2))
-    //             mkdir(args[1]);
-    //     } else if (strcmp(args[0], "cd")) {
-    //         if (__checkArgCount(2))
-    //             cd(args[1]);
-    //     } else if (strcmp(args[0], "cls")) {
-    //         clearScreen();
-    //     } else if (strcmp(args[0], "cat")) {
-    //         if (__checkArgCount(2))
-    //             cat(args[1]);
-    //     } else if (strcmp(args[0], "mv")) {
-    //         if (__checkArgCount(3))
-    //             mv(args[1], args[2]);
-    //     } else if (strcmp(args[0], "cp")){
-    //         if (__checkArgCount(3))
-    //             cp(args[1], args[2]);
-    //     }
-    // }
+    while (true) {
+        // printStringColored("NewOS:", COLOR_LIGHT_GREEN);
+        // printCWD();
+        printString(" >> ");
+        readString(input_buf);
+        // parseArgs(input_buf);
+        // endl;
+        // if (arg_count > MAX_ARGS) {
+        //     printString("Too many arguments\n");
+        //     continue;
+        // } else if (arg_count == 0) {
+        //     continue;
+        // }
+        // if (strcmp(args[0], "ls")) {
+        //     if (arg_count > 1)
+        //         ls(args[1]);
+        //     else
+        //         ls(0);
+        // } else if (strcmp(args[0], "mkdir")) {
+        //     if (__checkArgCount(2))
+        //         mkdir(args[1]);
+        // } else if (strcmp(args[0], "cd")) {
+        //     if (__checkArgCount(2))
+        //         cd(args[1]);
+        // } else if (strcmp(args[0], "cls")) {
+        //     clearScreen();
+        // } else if (strcmp(args[0], "cat")) {
+        //     if (__checkArgCount(2))
+        //         cat(args[1]);
+        // } else if (strcmp(args[0], "mv")) {
+        //     if (__checkArgCount(3))
+        //         mv(args[1], args[2]);
+        // } else if (strcmp(args[0], "cp")){
+        //     if (__checkArgCount(3))
+        //         cp(args[1], args[2]);
+        // }
+    }
 }

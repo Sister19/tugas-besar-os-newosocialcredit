@@ -47,7 +47,7 @@ void strcpy(char *dst, char *src)
         dst[i] = src[i];
         i++;
     }
-    dst[i] = '\0';
+    dst[i] = nullt;
 }
 
 void strncpy(char *dst, char *src, byte n)
@@ -58,7 +58,7 @@ void strncpy(char *dst, char *src, byte n)
         dst[i] = src[i];
         i++;
     }
-    dst[i] = '\0';
+    dst[i] = nullt;
 }
 
 void strcat(char *dst, char *src)

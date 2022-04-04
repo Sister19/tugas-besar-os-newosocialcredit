@@ -9,21 +9,29 @@ void readKey(char* scancode, char* key) {
 }
 
 int index = 0, len = 0, hidx = 0;
-void changeHistory(char* buffer, bool down) {
-    int i = 0;
-    hidx += (down ? 1 : -1);
-    // clear text
-    while (buffer[i] != nullt) {
-        buffer[i] = nullt;
-        printChar(KEY_BKSP);
-        i++;
-    }
-    strcpy(buffer, history[hidx]);
-    setCursor(firstCursorX, firstCursorY);
-    printString(buffer);
-    len = strlen(buffer);
-    index = len;
-}
+// char __hist0[MAX_INPUT];
+// char __hist1[MAX_INPUT];
+// char __hist2[MAX_INPUT];
+// char __hist3[MAX_INPUT];
+// char __hist4[MAX_INPUT];
+// char* history[MAX_HIST] = {__hist0, __hist1, __hist2, __hist3, __hist4};
+// int hist_length = 0;
+
+// void changeHistory(char* buffer, bool down) {
+//     int i = 0;
+//     hidx += (down ? 1 : -1);
+//     // clear text
+//     while (buffer[i] != nullt) {
+//         buffer[i] = nullt;
+//         printChar(KEY_BKSP);
+//         i++;
+//     }
+//     strcpy(buffer, history[hidx]);
+//     setCursor(firstCursorX, firstCursorY);
+//     printString(buffer);
+//     len = strlen(buffer);
+//     index = len;
+// }
 
 void printLines(char *buffer)
 {
@@ -62,7 +70,7 @@ void readString(char *buffer)
 {
     int i = 0;
     int input, scancode;
-    hidx = hist_length;
+    // hidx = hist_length;
     index = 0;
     len = 0;
     getCursor();
@@ -83,13 +91,13 @@ void readString(char *buffer)
             ++index;
             forwardCursor();
         }
-        // if there's history, we cycle it
-        else if (scancode == SC_UARROW && hidx > 0) {
-            changeHistory(buffer, false);
-        }
-        else if (scancode == SC_DARROW && hidx < hist_length - 1) {
-            changeHistory(buffer, true);
-        }
+        // // if there's history, we cycle it
+        // else if (scancode == SC_UARROW && hidx > 0) {
+        //     changeHistory(buffer, false);
+        // }
+        // else if (scancode == SC_DARROW && hidx < hist_length - 1) {
+        //     changeHistory(buffer, true);
+        // }
         // if CTRL+C, cancel input
         else if (scancode == SC_CTRL && input == 0x3) {
             // cancel input
@@ -101,16 +109,16 @@ void readString(char *buffer)
         {
             buffer[len] = nullt;
             if (len > 0){
-                if (hist_length == MAX_HIST) {
-                    i = 0;
-                    while (i < MAX_HIST - 1) {
-                        strcpy(history[i], history[i+1]);
-                        ++i;
-                    }
-                    strcpy(history[i], buffer);
-                } else {
-                    strcpy(history[hist_length++], buffer);
-                }
+                // if (hist_length == MAX_HIST) {
+                //     i = 0;
+                //     while (i < MAX_HIST - 1) {
+                //         strcpy(history[i], history[i+1]);
+                //         ++i;
+                //     }
+                //     strcpy(history[i], buffer);
+                // } else {
+                //     strcpy(history[hist_length++], buffer);
+                // }
             }
             return;
         }
