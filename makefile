@@ -6,7 +6,7 @@ clear:
 	mkdir out/system
 tc:
 	gcc tc_gen/tc_gen.c tc_gen/tc_lib -o tc_gen/tc_gen
-	./tc_gen/tc_gen A
+	./tc_gen/tc_gen D
 diskimage:
 	dd if=/dev/zero of=out/system.img bs=512 count=2880
 bootloader:

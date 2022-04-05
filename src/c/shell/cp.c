@@ -6,7 +6,7 @@ void ret_output(enum fs_retcode ret){
             printString("Copy success.\n");
             break;
         case FS_W_NOT_ENOUGH_STORAGE:
-            printStringColored("Error: Not enough storage to do copying.\n", COLOR_LIGHT_RED);
+            printStringColored("Error: Not enough storage.\n", COLOR_LIGHT_RED);
             break;
         default:
             printString("Error\n");
@@ -21,9 +21,11 @@ enum fs_retcode cpFile(byte from, byte to, char* last_name, char* current_name) 
     metadata.parent_index = from;
     metadata.buffer = buffer;
     strcpy(metadata.node_name, last_name);
-    read(&metadata, &ret); // asumsi selalu sukses
+
+    read(&metadata, &ret);
+
     metadata.parent_index = to;
-    if (current_name != 0)
+    if (strlen(current_name) != 0)
         strcpy(metadata.node_name, current_name);
     write(&metadata, &ret);
     return ret;
@@ -48,7 +50,7 @@ void cp(char* path1, char* path2){
             if (checkIsExist(path2, ldir2) && checkIsDirectory(path2, ldir2)){
                 ret_output(
                     cpFile(
-                        cdir1,
+                        ldir1,
                         ldir2,
                         node_fs_buffer.nodes[cdir1].name,
                         name_temp
@@ -62,10 +64,10 @@ void cp(char* path1, char* path2){
             ) {
                 ret_output(
                     cpFile(
-                        cdir1,
+                        ldir1,
                         cdir2,
                         node_fs_buffer.nodes[cdir1].name,
-                        0
+                        "\0"
                     )
                 );
             } else {
