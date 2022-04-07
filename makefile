@@ -41,7 +41,7 @@ clean:
 	@mkdir $(OUT_KERNEL)
 tc:
 	gcc tc_gen/tc_gen.c tc_gen/tc_lib -o tc_gen/tc_gen
-	./tc_gen/tc_gen A
+	./tc_gen/tc_gen D
 diskimage:
 	@echo "> Building disk image"
 	@dd if=/dev/zero of=$(OUT_DIR)/$(SYSTEM_IMG) bs=512 count=2880
