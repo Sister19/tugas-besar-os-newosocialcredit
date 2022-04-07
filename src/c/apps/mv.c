@@ -1,5 +1,5 @@
 #include "../header/shell.h"
-
+#include "../header/utility.h"
 void mv(char* path1, char* path2) {
     byte cdir1, ldir1;
     parsePathArg(path1);

@@ -1,8 +1,6 @@
-#ifndef FILESYSTEM_H
-#define FILESYSTEM_H
+#ifndef STRUCT_FS__H
+#define STRUCT_FS__H
 
-#include "interrupt.h"
-#include "std_lib.h"
 #include "std_type.h"
 
 // Menunjukkan lokasi sektor filesystem
@@ -74,19 +72,5 @@ enum fs_retcode {
     FS_W_MAXIMUM_SECTOR_ENTRY = 6,
     FS_W_INVALID_FOLDER       = 7
 };
-
-extern struct node_filesystem node_fs_buffer;
-extern struct map_filesystem map_fs_buffer;
-extern struct sector_filesystem sector_fs_buffer;
-
-// header untuk fungsi
-void fillMap();
-void readSector(byte *buffer, int sector_number);
-void readNodeFs();
-void writeNodeFs();
-void writeSector(byte* buffer, int sector_number);
-void read(struct file_metadata *metadata, enum fs_retcode *return_code);
-void write(struct file_metadata *metadata, enum fs_retcode *return_code);
-byte getNodeIdxFromParent(char* name, byte parent);
 
 #endif

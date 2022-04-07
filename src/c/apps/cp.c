@@ -1,7 +1,7 @@
-#include "../header/shell.h"
+#include "../header/utility.h"
 
-void ret_output(enum fs_retcode ret){
-    switch (ret){
+void ret_output(enum fs_retcode *ret){
+    switch (*ret){
         case FS_SUCCESS:
             printString("Copy success.\n");
             break;
@@ -74,6 +74,5 @@ void cp(char* path1, char* path2){
                 printStringColored("Can't copy file into file.\n", COLOR_LIGHT_RED);
             }
         }
-    
     }
 }

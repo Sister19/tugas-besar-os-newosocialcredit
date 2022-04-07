@@ -1,7 +1,7 @@
 #ifndef __STD_LIB_H
 #define __STD_LIB_H
 
-#include "std_type.h"
+#include "../includes/std_type.h"
 
 // Operator matematika umum
 
@@ -31,9 +31,6 @@ void strcat(char *dst, char *src);
 
 // Mengosongkan byte array yang memiliki panjang n
 void clear(byte *ptr, unsigned int n);
-
-// Mengosongkan char array dengan panjang n
-void clear_char(char *ptr, unsigned int n);
 
 // Konversi uinteger ke string
 char* itoa(int x);

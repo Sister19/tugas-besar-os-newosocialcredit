@@ -4,10 +4,32 @@
 
 ;kernel.asm contains assembly functions that you can use in your kernel
 
+global _getCursorPos
 global _putInMemory
-global _interrupt
 global _makeInterrupt21
+global _exec
 extern _handleInterrupt21
+
+_exec:
+	; calling conv
+	mov bp,sp
+	; get segment to bx
+	mov bx,[bp+2]
+	; get current segment
+	mov ax,cs
+	mov ds,ax
+	; change jump segment
+	mov si,launch
+	mov [si+3],bx
+	; setup segment registers
+	mov ds,bx
+	mov ss,bx
+	mov es,bx
+	; the stack start at segment:fff0
+	mov ax,0xfff0
+	mov sp,ax
+	mov bp,ax
+launch: jmp 0:0
 
 ;void putInMemory (int segment, int address, byte b)
 _putInMemory:
@@ -23,31 +45,20 @@ _putInMemory:
 	pop bp
 	ret
 
-;int interrupt (int number, int *regs)
-_interrupt:
+;int getCursorPos()
+_getCursorPos:
 	push bp
 	mov bp,sp
-	mov ax,[bp+4]	;get the interrupt number in AL
-	push ds		;use self-modifying code to call the right interrupt
-	mov bx,cs
-	mov ds,bx
-	mov si,intr
-	mov [si+1],al	;change the 00 below to the contents of AL
-	pop ds
-	; pass by reference those sweet parameters
-	mov si,[bp+6]	;get the other parameters AX, BX, CX, and dx
-	mov ax,[si]
-	mov bx,[si+2]
-	mov cx,[si+4]
-	mov dx,[si+6]
-
-intr:	int 0x00	;call the interrupt (00 will be changed above)
-
-	mov si,[bp+6]	;put parameters AX, BX, CX, and DX back
-	mov [si],ax
-	mov [si+2],bx
-	mov [si+4],cx
-	mov [si+6],dx
+	push dx
+	push cx
+	mov ax,0x0300
+	mov bx,0
+	; don't care for the rest
+	int 0x10
+	; return it to ax
+	mov ax,dx
+	pop cx
+	pop dx
 	pop bp
 	ret
 

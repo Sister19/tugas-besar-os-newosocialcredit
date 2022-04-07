@@ -1,4 +1,4 @@
-#include "../header/shell.h"
+#include "../header/utility.h"
 
 void ls(char* path){
     int i = 0, cnt = 0;
