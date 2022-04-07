@@ -25,6 +25,6 @@
 #define IS_PRINTABLE(input) (input >= 0x20 && input <= 0x7e)
 
 void readString(char* buffer);
-void readKey(char* scancode, char* key);
+void readKey(int* scancode, int* key);
 
 #endif

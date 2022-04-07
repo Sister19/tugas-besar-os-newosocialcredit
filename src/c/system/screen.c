@@ -67,11 +67,6 @@ void backwardCursor() {
         setCursor(cursorX - 1, cursorY);
 }
 
-void setVideoMode(int mode)
-{
-    intr(INT_VIDEO, mode, 0, 0, 0);
-}
-
 void printCharColored(char c, char color) {
     int cursorX, cursorY;
     getCursor(&cursorX, &cursorY);
