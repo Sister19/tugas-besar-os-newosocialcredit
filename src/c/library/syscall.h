@@ -1,11 +1,10 @@
 #ifndef SYSCALL_H
 #define SYSCALL_H
 
-#include "constant.h"
-#include "struct_fs.h"
-#include "std_type.h"
+#include "../includes/constant.h"
+#include "../includes/struct_fs.h"
 #include "std_lib.h"
-#include "interrupt.h"
+#include "../includes/interrupt.h"
 
 // Write endline
 #define endl printChar('\n')
@@ -13,7 +12,6 @@
 #define sp printChar(' ')
 
 // 0x0
-void printLines(char* buf);
 void printStringColored(char *buf, int col);
 void printString(char *buf);
 void printChar(char c);
@@ -21,6 +19,8 @@ void printChar(char c);
 void readString(char *buf);
 void readKey(char* scancode, char *key);
 // 0x2
+void readNodeFs(struct node_filesystem *node_fs_buffer);
+void writeNodeFs(struct node_filesystem *node_fs_buffer);
 void readSector(byte* buf, int sec_num);
 void writeSector(byte* buf, int sec_num);
 // 0x3

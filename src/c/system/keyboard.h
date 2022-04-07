@@ -1,10 +1,9 @@
 #ifndef __KEYBOARD_H
 #define __KEYBOARD_H
 
-#include "std_lib.h"
-#include "std_type.h"
-#include "interrupt.h"
-#include "constant.h"
+#include "../library/std_lib.h"
+#include "../includes/interrupt.h"
+#include "../includes/constant.h"
 
 // Scancodes
 #define SC_TAB 0x0F
@@ -27,6 +26,5 @@
 
 void readString(char* buffer);
 void readKey(char* scancode, char* key);
-void printLines(char *buffer);
 
 #endif

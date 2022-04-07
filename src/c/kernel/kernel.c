@@ -1,8 +1,8 @@
-#include "header/screen.h"
-#include "header/keyboard.h"
-#include "header/constant.h"
-#include "header/filesystem.h"
-#include "header/kernel.h"
+#include "../system/screen.h"
+#include "../system/keyboard.h"
+#include "../includes/constant.h"
+#include "../system/filesystem.h"
+#include "kernel.h"
 
 int main()
 {
@@ -10,6 +10,7 @@ int main()
     byte buffer[512];
     setVideoMode(VIDEO_MODE); // set video mode to 03
     printTitle();
+    // put shell to memory
     for (i = 0; i < 16; i++) {
         readSector(buffer, 0x110 + i);
         for (j = 0; j < 512; j++) {
@@ -18,16 +19,15 @@ int main()
     }
     fillMap(); // call fillMap function
     makeInterrupt21();
-    exec(0x2000);
+    // spawn shell
+    //exec(0x2000);
     while(true);
 }
 
 void handleInterrupt21(int ax, int bx, int cx, int dx) {
     switch (ax) {
         case 0x0: // print stdout
-            if (dx == 1)
-                printLines(bx);
-            else if (dx == 2)
+            if (dx == 2)
                 printStringColored(bx, cx);
             else if (dx == 3)
                 printString(bx);
@@ -48,13 +48,13 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
             else if (dx == 1)
                 writeSector(bx, cx);
             break;
-        case 0x3: // file manip
+        case 0x3: // file manip / memory
             if (dx == 0)
                 read(bx, cx);
             else if (dx == 1)
                 write(bx, cx);
-            else if (dx == 2)
-                ax = getNodeIdxFromParent(bx, cx);
+            //else if (dx == 2)
+                //ax = getNodeIdxFromParent(bx, cx);
             break;
         case 0x4: // screen manipulation
             if (dx == 0)
@@ -65,6 +65,9 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
                 ax = getCursorPos();
             else if (dx == 1)
                 setCursor(bx, cx);
+            break;
+        case 0x6:
+            exec(bx);
             break;
         default:
             printString("Invalid Interrupt");

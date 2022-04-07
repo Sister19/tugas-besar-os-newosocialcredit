@@ -1,48 +1,35 @@
 #include "../header/shell.h"
-#include "../header/interrupt.h"
-struct node_filesystem node_fs_buffer;
 
-byte current_dir = FS_NODE_P_IDX_ROOT;
-char __arg1[MAX_INPUT];
-char __arg2[MAX_INPUT];
-char __arg3[MAX_INPUT];
-char __arg4[MAX_INPUT];
-char* args[MAX_ARGS] = {__arg1, __arg2, __arg3, __arg4};
-int arg_count = 0;
+// void _printCWDRec(struct node_filesystem* node_fs_buffer, byte dir) {
+//     if (dir == FS_NODE_P_IDX_ROOT) {
+//         printCharColored('/', COLOR_LIGHT_CYAN);
+//     } else {
+//         _printCWDRec(node_fs_buffer, node_fs_buffer->nodes[dir].parent_node_index);
+//         printStringColored(node_fs_buffer->nodes[dir].name, COLOR_LIGHT_CYAN);
+//         printCharColored('/', COLOR_LIGHT_CYAN);
+//     }
+// }
 
-byte arg_cdir;
-byte arg_ldir;
-char name_temp[14];
+// void printCWD(byte current_dir) {
+//     struct node_filesystem node_fs_buffer;
+//     readNodeFs(&node_fs_buffer);
+//     _printCWDRec(&node_fs_buffer, current_dir);
+// }
 
-void _printCWDRec(byte dir) {
-    if (dir == FS_NODE_P_IDX_ROOT) {
-        printCharColored('/', COLOR_LIGHT_CYAN);
-    } else {
-        _printCWDRec(node_fs_buffer.nodes[dir].parent_node_index);
-        printStringColored(node_fs_buffer.nodes[dir].name, COLOR_LIGHT_CYAN);
-        printCharColored('/', COLOR_LIGHT_CYAN);
-    }
-}
-
-void printCWD() {
-    readNodeFs(&node_fs_buffer);
-    _printCWDRec(current_dir);
-}
-
-bool __checkArgCount(int min_arg) {
-    if (arg_count < min_arg) {
-        printStringColored("Not enough arguments.\n", COLOR_LIGHT_RED);
-        return false;
-    }
-    return true;
-}
+// bool __checkArgCount(int arg_count, int min_arg) {
+//     if (arg_count < min_arg) {
+//         printStringColored("Not enough arguments.\n", COLOR_LIGHT_RED);
+//         return false;
+//     }
+//     return true;
+// }
 
 int main() {
     // while (true){
     char input_buf[MAX_INPUT];
     int i;
     while (true) {
-        // printStringColored("NewOS:", COLOR_LIGHT_GREEN);
+        printStringColored("NewOS:", COLOR_LIGHT_GREEN);
         // printCWD();
         printString(" >> ");
         readString(input_buf);
@@ -76,6 +63,8 @@ int main() {
         // } else if (strcmp(args[0], "cp")){
         //     if (__checkArgCount(3))
         //         cp(args[1], args[2]);
+        // } else {
+        //     printStringColored("Unknown command!\n", COLOR_LIGHT_RED); 
         // }
     }
 }

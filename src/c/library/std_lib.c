@@ -1,5 +1,5 @@
-#include "header/std_lib.h"
-#include "header/constant.h"
+#include "std_lib.h"
+#include "../includes/constant.h"
 
 // Operator matematika umum
 int mod(int a, int n)
@@ -41,7 +41,7 @@ bool strcmp(char *s1, char *s2)
 
 void strcpy(char *dst, char *src)
 {
-    int i = 0;
+    unsigned int i = 0;
     while (src[i] != nullt)
     {
         dst[i] = src[i];
@@ -50,9 +50,9 @@ void strcpy(char *dst, char *src)
     dst[i] = nullt;
 }
 
-void strncpy(char *dst, char *src, byte n)
+void strncpy(char *dst, char *src, unsigned int n)
 {
-    int i = 0;
+    unsigned int i = 0;
     while (i < n && src[i] != nullt)
     {
         dst[i] = src[i];
@@ -76,9 +76,9 @@ void strcat(char *dst, char *src)
     dst[i] = '\0';
 }
 
-void clear(byte *ptr, byte n)
+void clear(byte *ptr, unsigned int n)
 {
-    int i;
+    unsigned int i;
     for (i = 0; i < n; i++)
     {
         ptr[i] = 0;

@@ -1,22 +1,22 @@
 #ifndef _SCREEN_H
 #define _SCREEN_H
 
-#include "interrupt.h"
-#include "constant.h"
+#include "../includes/interrupt.h"
+#include "../includes/constant.h"
 
 // Write endline
 #define endl printChar('\n')
 // Write new space
 #define sp printChar(' ')
 
-int cursorX, cursorY;
-
 extern int getCursorPos();
 
 // Get the cursor position
-void getCursor();
+void getCursor(int* cursorX, int* cursorY);
 // Set the cursor position
 void setCursor(int x, int y);
+void startCursor(int* x, int* y);
+void endCursor(int* x, int* y);
 // Forward the cursor
 void forwardCursor();
 // Backward the cursor

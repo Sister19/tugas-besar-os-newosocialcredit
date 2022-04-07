@@ -1,6 +1,5 @@
-#include "../header/filesystem.h"
-#include "../header/screen.h"
-#include "../header/global.h"
+#include "filesystem.h"
+#include "screen.h"
 
 void readSector(byte* buffer, int sector_number){
     int sector_read_count = 0x01;
@@ -37,6 +36,7 @@ void writeSector(byte* buffer, int sector_number){
 }
 
 void fillMap(){
+    struct map_filesystem map_fs_buffer;
     int i = 0;
     readSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
     // mengubah sektor 0-15 dan 256-511 menjadi terisi
@@ -50,22 +50,22 @@ void fillMap(){
     writeSector(&map_fs_buffer, FS_MAP_SECTOR_NUMBER);
 }
 
-void readNodeFs() {
-    readSector(node_fs_buffer.nodes, FS_NODE_SECTOR_NUMBER);
-    readSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+void readNodeFs(struct node_filesystem* node_fs_buffer) {
+    readSector(node_fs_buffer->nodes, FS_NODE_SECTOR_NUMBER);
+    readSector(&(node_fs_buffer->nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
 }
 
-void writeNodeFs() {
-    writeSector(node_fs_buffer.nodes, FS_NODE_SECTOR_NUMBER);
-    writeSector(&(node_fs_buffer.nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
+void writeNodeFs(struct node_filesystem* node_fs_buffer) {
+    writeSector(node_fs_buffer->nodes, FS_NODE_SECTOR_NUMBER);
+    writeSector(&(node_fs_buffer->nodes[32]), FS_NODE_SECTOR_NUMBER + 1);
 }
 
-byte getNodeIdxFromParent(char* name, byte parent) {
+byte getNodeIdxFromParent(struct node_filesystem* node_fs_buffer, char* name, byte parent) {
     byte i;
     for (i = 0; i < 64; i++) {
         if (
-            node_fs_buffer.nodes[i].parent_node_index == parent
-            && strcmp(node_fs_buffer.nodes[i].name, name)
+            node_fs_buffer->nodes[i].parent_node_index == parent
+            && strcmp(node_fs_buffer->nodes[i].name, name)
         ) {
             return i;
         }
@@ -73,12 +73,13 @@ byte getNodeIdxFromParent(char* name, byte parent) {
     return IDX_NODE_UNDEF;
 }
 
-char buffer[512];
+// assumption: metadata->buffer is already defined with length 8192
 void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // Tambahkan tipe data yang dibutuhkan
+    struct sector_filesystem sector_fs_buffer;
+    struct node_filesystem   node_fs_buffer;
     struct node_entry        node_buffer;
     struct sector_entry      sector_entry_buffer;
-    char* file_partition = buffer;
     
     int i = 0;
     int j = 0;
@@ -93,7 +94,7 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     // dan keluar.
 
     // Asumsi metadata sudah terdefinisi dengan benar (masukan dari parameter valid)
-    i = getNodeIdxFromParent(metadata->node_name, metadata->parent_index);
+    i = getNodeIdxFromParent(&node_fs_buffer, metadata->node_name, metadata->parent_index);
     if (i == IDX_NODE_UNDEF){
         *return_code = FS_R_NODE_NOT_FOUND;
         return;
@@ -116,31 +117,23 @@ void read(struct file_metadata *metadata, enum fs_retcode *return_code){
         // 4. Jika byte bernilai 0, selesaikan iterasi
         j = 0;
         while (j < 16 && sector_entry_buffer.sector_numbers[j] != 0x00){
-            clear(file_partition, 512);
             // 5. Jika byte valid, lakukan readSector()
-            readSector(file_partition, sector_entry_buffer.sector_numbers[j]);
-            // dan masukkan kedalam buffer yang disediakan pada metadata
-            memcpy(
-                metadata->buffer + (j  * 512),
-                file_partition,
-                512
-            );
+            readSector(metadata->buffer + (j * 512), sector_entry_buffer.sector_numbers[j]);
             j++;
         } // 6. Lompat ke iterasi selanjutnya hingga iterasi selesai
         // 7. Tulis retcode FS_SUCCESS pada akhir proses pembacaan.
-        metadata->filesize = 512 * j;
+        metadata->filesize = strlen(metadata->buffer);
         *return_code = FS_SUCCESS;
-        return;
-
     } else { // Node bertipe folder (node_fs_buffer.nodes[i].sector_entry_index == FS_NODE_S_IDX_FOLDER)
         *return_code = FS_R_TYPE_IS_FOLDER;
-        return;
     }
 }
 
 void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
-    //char buffer[512];
     // Tambahkan tipe data yang dibutuhkan
+    struct map_filesystem    map_fs_buffer;
+    struct sector_filesystem sector_fs_buffer;
+    struct node_filesystem   node_fs_buffer;
     int index_node, index_map, index_sector;
     int count_empty_sector;
     int count_partition;
@@ -159,7 +152,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     //    Jika tidak ditemukan kecocokan, lakukan proses ke-2.
     //    Jika ditemukan node yang cocok, tuliskan retcode 
     //    FS_W_FILE_ALREADY_EXIST dan keluar. 
-    index_node = getNodeIdxFromParent(metadata->node_name, metadata->parent_index);
+    index_node = getNodeIdxFromParent(&node_fs_buffer, metadata->node_name, metadata->parent_index);
 
     if (index_node != IDX_NODE_UNDEF){
         *return_code = FS_W_FILE_ALREADY_EXIST;
@@ -212,11 +205,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
         }
     }
 
-    if (count_empty_sector < divc(metadata->filesize, 512)){
-        *return_code = FS_W_NOT_ENOUGH_STORAGE;
-        return;
-    }
-    if (metadata->filesize > 8192){
+    if (count_empty_sector < divc(metadata->filesize, 512) || metadata->filesize > 8192){
         *return_code = FS_W_NOT_ENOUGH_STORAGE;
         return;
     }
@@ -281,9 +270,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
                 j++;
                 //    6. Lakukan writeSector() dengan file pointer buffer pada metadata 
                 //       dan sektor tujuan i
-                clear(buffer, 512);
-                memcpy(buffer, metadata->buffer+count_partition*512, 512);
-                writeSector(buffer, i);
+                writeSector(metadata->buffer + count_partition * 512, i);
                 count_partition++;
                 //    7. Jika ukuran file yang telah tertulis lebih besar atau sama dengan
                 //       filesize pada metadata, penulisan selesai
@@ -307,5 +294,4 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
 
     // 9. Kembalikan retcode FS_SUCCESS
     *return_code = FS_SUCCESS;
-    
 }

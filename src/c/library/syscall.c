@@ -1,10 +1,6 @@
-#include "header/syscall.h"
-#include "header/constant.h"
+#include "syscall.h"
 
 // 0x0
-void printLines(char* buf) {
-    intr(0x21, 0x00, buf, 0, 1);
-}
 void printStringColored(char *buf, int col) {
     intr(0x21, 0x00, buf, col, 2);
 }
@@ -59,4 +55,17 @@ int getNodeIdxFromParent(char* name, unsigned char parent){
 // 0x4
 void clearScreen(){
     intr(0x21, 0x4, 0, 0, 0);
+}
+// 0x5
+void getCursorPos(int* x, int *y) {
+    int DX = intr(0x21, 0x5, 0, 0, 0);
+    *x = REG_L(DX);
+    *y = REG_H(DX);
+}
+void setCursorPos(int x, int y) {
+    intr(0x21, 0x5, x, y, 1);
+}
+// 0x6
+void exec(int segment) {
+    intr(0x21, 0x6, segment, 0, 0);
 }

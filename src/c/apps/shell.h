@@ -1,7 +1,7 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-#include "syscall.h"
+#include "../library/syscall.h"
 
 // shell.c
 void printCWD();

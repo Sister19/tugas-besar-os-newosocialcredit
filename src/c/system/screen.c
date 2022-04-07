@@ -1,29 +1,53 @@
-#include "../header/screen.h"
-#include "../header/keyboard.h"
-#include "../header/global.h"
+#include "screen.h"
+#include "keyboard.h"
 
-void getCursor()
+void getCursor(int* cursorX, int* cursorY)
 {
     int DX = getCursorPos();
-    cursorX = REG_L(DX);
-    cursorY = REG_H(DX);
+    *cursorX = REG_L(DX);
+    *cursorY = REG_H(DX);
+}
+
+void startCursor(int* x, int* y) {
+    static int firstCursorX = 0, firstCursorY = 0;
+    if (*x == 0 && *y == -1)
+        firstCursorY--;
+    else if (*x >= 0 && *y >= 0) {
+        firstCursorX = *x;
+        firstCursorY = *y;
+    }
+    *x = firstCursorX;
+    *y = firstCursorY;
+}
+
+void endCursor(int* x, int* y) {
+    static int lastCursorX = 0, lastCursorY = 0;
+    if (*x == 0 && *y == -1)
+        lastCursorY--;
+    else if (*x >= 0 && *y >= 0) {
+        lastCursorX = *x;
+        lastCursorY = *y;
+    }
+    *x = lastCursorX;
+    *y = lastCursorY;
 }
 
 void setCursor(int x, int y)
 {
+    int cx = 0, cy = -1;
     if (y > MAX_CURSOR_Y) {
         intr(INT_VIDEO, AX_VIDEO_SCROLLUP(0x01), 0x0F00, START_CURSOR, END_CURSOR);
         y = MAX_CURSOR_Y;
-        --lastCursorY;
-        --firstCursorY;
+        endCursor(&cx, &cy);
+        cx = 0, cy = -1;
+        startCursor(&cx, &cy);
     }
     intr(INT_VIDEO, AX_VIDEO_SETCURSOR, 0, 0, REG(y, x));
-    cursorX = x;
-    cursorY = y;
 }
 
 void forwardCursor() {
-    getCursor();
+    int cursorX, cursorY;
+    getCursor(&cursorX, &cursorY);
     if (cursorX == MAX_CURSOR_X)
     {
         cursorX = 0;
@@ -35,8 +59,8 @@ void forwardCursor() {
 }
 
 void backwardCursor() {
-    intr(0x21, 0x5, 0, 0, 0);
-    getCursor();
+    int cursorX, cursorY;
+    getCursor(&cursorX, &cursorY);
     if (cursorX == 0) // already leftmost
         setCursor(MAX_CURSOR_X, cursorY - 1);
     else
@@ -49,7 +73,8 @@ void setVideoMode(int mode)
 }
 
 void printCharColored(char c, char color) {
-    getCursor();
+    int cursorX, cursorY;
+    getCursor(&cursorX, &cursorY);
     if (c == KEY_LF) {
         setCursor(0, cursorY + 1);
     } else if (c == KEY_BKSP) {
@@ -128,20 +153,20 @@ void printTitle()
     endl;endl;
 }
 
-// void help()
-// {
-//     endl;
-//     printStringColored("cd <DEST>", COLOR_LIGHT_CYAN);
-//     printString("- Moves current working directory to destination path"); endl;
-//     printStringColored("ls", COLOR_LIGHT_CYAN);
-//     printString(" - Displays content of current directory"); endl;
-//     printStringColored("mv <FILE> <DEST_PATH>", COLOR_LIGHT_CYAN);
-//     printString(" - Moves a file to destination path"); endl;
-//     printStringColored("mkdir <DIR_NAME>", COLOR_LIGHT_CYAN);
-//     printString(" - Creates a new directory in current working directory"); endl;
-//     printStringColored("cat <FILE>", COLOR_LIGHT_CYAN);
-//     printString(" - Prints the content of a file"); endl;
-//     printStringColored("cp <FILE> <DEST_PATH> / <NEW_NAME>", COLOR_LIGHT_CYAN);
-//     printString(" - Copies a file to a path or to the same path with different name"); endl;
-//     endl;
-// }
+void help()
+{
+    endl;
+    printStringColored("cd <DEST>", COLOR_LIGHT_CYAN);
+    printString("- Moves current working directory to destination path"); endl;
+    printStringColored("ls", COLOR_LIGHT_CYAN);
+    printString(" - Displays content of current directory"); endl;
+    printStringColored("mv <FILE> <DEST_PATH>", COLOR_LIGHT_CYAN);
+    printString(" - Moves a file to destination path"); endl;
+    printStringColored("mkdir <DIR_NAME>", COLOR_LIGHT_CYAN);
+    printString(" - Creates a new directory in current working directory"); endl;
+    printStringColored("cat <FILE>", COLOR_LIGHT_CYAN);
+    printString(" - Prints the content of a file"); endl;
+    printStringColored("cp <FILE> <DEST_PATH> / <NEW_NAME>", COLOR_LIGHT_CYAN);
+    printString(" - Copies a file to a path or to the same path with different name"); endl;
+    endl;
+}

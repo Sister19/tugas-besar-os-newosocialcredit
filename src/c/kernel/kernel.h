@@ -1,9 +1,8 @@
 #ifndef __KERNEL_H
 #define __KERNEL_H
 
-#include "std_lib.h"
-#include "std_type.h"
-#include "interrupt.h"
+#include "../library/std_lib.h"
+#include "../includes/interrupt.h"
 
 // Fungsi bawaan
 extern void putInMemory(int segment, int address, byte b);

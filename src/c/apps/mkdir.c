@@ -12,13 +12,13 @@ void mkdir(char* path){
         switch (ret)
         {
             case FS_SUCCESS:
-                printString("Directory created successfully!\n");
+                printString("Directory created successfully.\n");
                 break;
             case FS_W_FILE_ALREADY_EXIST:
                 printStringColored("Error: A folder with the same name has existed.\n", COLOR_LIGHT_RED);
                 break;
             default:
-                printString("Error\n");
+                printString("Unknown error.\n");
                 break;
         }
     }
