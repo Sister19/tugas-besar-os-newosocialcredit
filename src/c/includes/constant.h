@@ -21,9 +21,9 @@
 // Null terminated
 #define nullt '\0'
 // Length of the buffer
-#define MAX_INPUT 256
+#define MAX_INPUT 256u
 #define MAX_ARGS 8
-#define MAX_HIST 7
+#define MAX_HIST 8
 
 // Color
 #define COLOR_BLACK 0x0

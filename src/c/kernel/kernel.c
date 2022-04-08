@@ -7,67 +7,115 @@
 int main()
 {
     int i = 0, j = 0;
-    byte buffer[512];
-    setVideoMode(VIDEO_MODE); // set video mode to 03
-    printTitle();
-    // put shell to memory
-    for (i = 0; i < 16; i++) {
-        readSector(buffer, 0x110 + i);
-        for (j = 0; j < 512; j++) {
-            putInMemory(0x2000, i * 512 + j, buffer[j]);
-        }
-    }
-    fillMap(); // call fillMap function
+    struct file_metadata shell_bin;
+    enum fs_retcode ret;
+    byte buffer[512 * 16];
     makeInterrupt21();
-    // spawn shell
-    //exec(0x2000);
+    intr(INT_VIDEO, VIDEO_MODE, 0, 0, 0); // set video mode to 03
+    fillMap(); // call fillMap function
+    // find shell and read it.
+    strcpy(shell_bin.node_name, "shell");
+    shell_bin.buffer = buffer;
+    clear(buffer, 512*16);
+    shell_bin.parent_index = 0;
+    read(&shell_bin, &ret);
+    if (ret == 0) {
+        printTitle();
+        // load once
+        for (i = 0; i < 8192; i++) {
+            putInMemory(0x2000, i, buffer[i]);
+        }
+        executeProgram(0x2000);
+    } else {
+        printStringColored("Error loading OS...\nCan't find shell executable. Please rebuild the OS.", COLOR_LIGHT_RED);
+    }
     while(true);
 }
 
 void handleInterrupt21(int ax, int bx, int cx, int dx) {
-    switch (ax) {
+    switch (REG_L(ax)) {
         case 0x0: // print stdout
-            if (dx == 2)
-                printStringColored(bx, cx);
-            else if (dx == 3)
-                printString(bx);
-            else if (dx == 4)
-                printChar(bx);
-            else if (dx == 5)
-                printCharColored(bx, cx);
+            switch (REG_H(ax)) {
+                case 0:
+                    printStringColored(bx, cx);
+                    break;
+                case 1:
+                    printString(bx);
+                    break;
+                case 2:
+                    printChar(bx);
+                    break;
+                case 3:
+                    printCharColored(bx, cx);
+                default:
+                    break;
+            }
             break;
         case 0x1: // keyboard input / stdin
-            if (dx == 0)
-                readString(bx);
-            else if (dx == 1) // bx & cx should be pointer
-                readKey(bx, cx);
+            switch (REG_H(ax)) {
+                case 0:
+                    readString(bx);
+                    break;
+                case 1:
+                    readKey(bx, cx);
+                    break;
+                default:
+                    break;
+            }
             break;
         case 0x2: // sector mounting
-            if (dx == 0)
-                readSector(bx, cx);
-            else if (dx == 1)
-                writeSector(bx, cx);
+            switch (REG_H(ax)) {
+                case 0:
+                    readSector(bx, cx);
+                    break;
+                case 1:
+                    writeSector(bx, cx);
+                    break;
+                default:
+                    break;
+            }
             break;
         case 0x3: // file manip / memory
-            if (dx == 0)
-                read(bx, cx);
-            else if (dx == 1)
-                write(bx, cx);
-            //else if (dx == 2)
-                //ax = getNodeIdxFromParent(bx, cx);
+            switch (REG_H(ax)) {
+                case 0:
+                    read(bx, cx);
+                    break;
+                case 1:
+                    write(bx, cx);
+                    break;
+                case 2:
+                    putInMemory(bx, cx, dx);
+                    break;
+                case 3:
+                    ax = getNodeIdxFromParent(bx, cx, dx);
+                    break;
+                default:
+                    break;
+            }
             break;
-        case 0x4: // screen manipulation
-            if (dx == 0)
-                clearScreen();
+        case 0x4: // screen / cursor manipulation
+            switch (REG_H(ax)) {
+                case 0:
+                    clearScreen();
+                    break;
+                case 1:
+                    ax = getCursorPos();
+                    break;
+                case 2:
+                    setCursor(bx, cx);
+                    break;
+                default:
+                    break;
+            }
             break;
-        case 0x5: // mouse manipulation
-            if (dx == 0)
-                ax = getCursorPos();
-            else if (dx == 1)
-                setCursor(bx, cx);
-            break;
-        case 0x6:
-            exec(bx);
+        case 0x5:
+            switch (REG_H(ax)) {
+                case 0:
+                    executeProgram(bx);
+                    break;
+                default:
+                    break;
+            }
             break;
         default:
             printString("Invalid Interrupt");

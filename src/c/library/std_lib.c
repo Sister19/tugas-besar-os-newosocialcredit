@@ -63,26 +63,22 @@ void strncpy(char *dst, char *src, unsigned int n)
 
 void strcat(char *dst, char *src)
 {
-    int i = 0;
+    unsigned int i = 0;
     while (dst[i] != nullt)
-    {
-        i++;
-    }
+        ++i;
     while (src[i] != nullt)
     {
         dst[i] = src[i];
-        i++;
+        ++i;
     }
-    dst[i] = '\0';
+    dst[i] = nullt;
 }
 
 void clear(byte *ptr, unsigned int n)
 {
     unsigned int i;
-    for (i = 0; i < n; i++)
-    {
+    for (i = 0; i < n; ++i)
         ptr[i] = 0;
-    }
 }
 
 char str[8];
@@ -94,7 +90,7 @@ char* itoa(int x)
         str[i++] = mod(x, 10) + '0';
         x /= 10;
     } while (x);
-    str[i] = '\0';
+    str[i] = nullt;
     return str;
 }
 

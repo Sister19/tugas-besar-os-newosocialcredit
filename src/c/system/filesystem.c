@@ -198,16 +198,18 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     //    Jika ukuran filesize melebihi 8192 bytes, tuliskan retcode
     //    FS_W_NOT_ENOUGH_STORAGE dan keluar.
     //    Jika tersedia empty space, lanjutkan langkah ke-5.
-    count_empty_sector = 0;
-    for (index_map = 0; index_map < 256; index_map++){ // Pengecekan empty space 
-        if (!map_fs_buffer.is_filled[index_map]){
-            count_empty_sector++;
+    if (metadata->buffer != 0) {
+        count_empty_sector = 0;
+        for (index_map = 0; index_map < 256; index_map++){ // Pengecekan empty space 
+            if (!map_fs_buffer.is_filled[index_map]){
+                count_empty_sector++;
+            }
         }
-    }
 
-    if (count_empty_sector < divc(metadata->filesize, 512) || metadata->filesize > 8192){
-        *return_code = FS_W_NOT_ENOUGH_STORAGE;
-        return;
+        if (count_empty_sector < divc(metadata->filesize, 512) || metadata->filesize > 8192){
+            *return_code = FS_W_NOT_ENOUGH_STORAGE;
+            return;
+        }
     }
 
     // 5. Cek pada filesystem sector apakah terdapat entry yang masih kosong.

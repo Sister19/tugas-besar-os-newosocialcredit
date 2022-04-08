@@ -20,7 +20,7 @@ LIST_SYSTEMS := $(notdir $(wildcard $(SRC_SYSTEM)/*.c))
 KERNEL_DIR := /kernel
 SRC_KERNEL := $(SRC_DIR)$(KERNEL_DIR)
 OUT_KERNEL := $(OUT_DIR)$(KERNEL_DIR)
-CC := @bcc -ansi -c -o
+CC := @bcc -ansi -c -O1 -o
 CC_ASM := @nasm -f as86
 LINKER := @ld86 -o
 
@@ -29,7 +29,7 @@ define \n
 
 endef
 	
-all: clean diskimage bootloader kernel # apps
+all: clean diskimage bootloader kernel apps inject
 clean:
 	@echo "> Clearing older build"
 	@rm -r -f $(OUT_DIR)
@@ -59,7 +59,7 @@ apps:
 	$(foreach file,$(LIST_APPS),\
 	$(CC) $(OUT_APPS)/$(file:%.c=%.o) $(SRC_APPS)/$(file)${\n}\
 	$(LINKER) $(OUT_APPS)/$(basename $(file)) -d $(OUT_APPS)/$(file:%.c=%.o) \
-		$(OUT_LIB)/interrupt.o \
+		$(OUT_LIB)/$(INTERRUPT_SRC:%.asm=%.o) \
 		$(foreach lib,$(LIST_LIBRARIES),$(OUT_LIB)/$(lib:%.c=%.o) )${\n})
 	# bcc -ansi -c -o out/apps/mkdir.o src/c/apps/mkdir.c
 	# bcc -ansi -c -o out/apps/cat.o src/c/apps/cat.c
@@ -78,6 +78,9 @@ apps:
 	# bcc -ansi -c -o out/shell_common.o src/c/apps/shell_common.c
 	# ld86 -o out/shell -d out/shell_common.o out/shell.o out/interrupt.o out/syscall.o out/std_lib.o
 	# dd if=out/shell of=out/system.img bs=512 conv=notrunc seek=272
+inject:
+	@gcc src/c/utils/inject_apps.c -o src/c/utils/inject_apps
+	./src/c/utils/inject_apps
 system:
 	@echo "> Compiling system"
 	$(foreach file,$(LIST_SYSTEMS),\

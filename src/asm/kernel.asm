@@ -7,29 +7,28 @@
 global _getCursorPos
 global _putInMemory
 global _makeInterrupt21
-global _exec
+global _executeProgram
 extern _handleInterrupt21
 
-_exec:
+_executeProgram:
 	; calling conv
 	mov bp,sp
 	; get segment to bx
 	mov bx,[bp+2]
-	; get current segment
+	; get current code segment
 	mov ax,cs
 	mov ds,ax
 	; change jump segment
-	mov si,launch
+	mov si,jump
 	mov [si+3],bx
 	; setup segment registers
 	mov ds,bx
 	mov ss,bx
 	mov es,bx
 	; the stack start at segment:fff0
-	mov ax,0xfff0
-	mov sp,ax
-	mov bp,ax
-launch: jmp 0:0
+	mov sp,0xfff0
+	mov bp,0xfff0
+jump: jmp 0:0
 
 ;void putInMemory (int segment, int address, byte b)
 _putInMemory:

@@ -1,22 +1,29 @@
-#include "../header/utility.h"
+#include "../library/program.h"
 
-void ls(char* path){
+void main() {
     int i = 0, cnt = 0;
-    if (path != 0) {
-        parsePathArg(path);
-        if (!(checkIsExist(path, arg_cdir) && checkIsDirectory(path, arg_cdir)))
-            return;
-    } else { // either way, we also read fs node.
-        readNodeFs(&node_fs_buffer);
-        arg_cdir = current_dir;
+    byte arg_cdir, arg_ldir;
+    char name_res[14];
+    char *path;
+    struct shell_data data;
+    struct node_filesystem node_fs_buffer;
+    struct node_entry node;
+    getShellData(&data); readsNode(&node_fs_buffer);
+    path = data.arg.argv[1];
+    if (data.cwd.arg_count > 1) {
+        parsePathArg(path, data.cwd.current_dir, &arg_cdir, &arg_ldir, name_res, &node);
+        if (!(checkIsExist(path, arg_cdir) && checkIsDirectory(&node, path, arg_cdir)))
+            exit(&data);
+    } else { // either way, we set current to current_dir
+        arg_cdir = data.cwd.current_dir;
     }
     while (i < 64) {
-        struct node_entry node = node_fs_buffer.nodes[i];
+        node = node_fs_buffer.nodes[i];
         if (node.name[0] != nullt && node.parent_node_index == arg_cdir) {
             if (node.sector_entry_index == FS_NODE_S_IDX_FOLDER) {
-                printStringColored(node.name, COLOR_LIGHT_GREEN); sp; sp;
+                putsc(node.name, COLOR_LIGHT_GREEN); sp; sp;
             } else {
-                printString(node.name); sp; sp;
+                puts(node.name); sp; sp;
             }
             cnt++;
         }
@@ -25,6 +32,7 @@ void ls(char* path){
     if (cnt > 0){
         endl;
     } else {
-        printStringColored("Directory empty.", COLOR_LIGHT_RED); endl;
+        putsc("Directory empty.", COLOR_LIGHT_RED); endl;
     }
+    exit(&data);
 }

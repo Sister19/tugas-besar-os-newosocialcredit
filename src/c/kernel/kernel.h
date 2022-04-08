@@ -7,7 +7,7 @@
 // Fungsi bawaan
 extern void putInMemory(int segment, int address, byte b);
 extern void makeInterrupt21();
-extern void exec(int segment);
+extern void executeProgram(int segment);
 
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 
