@@ -142,7 +142,7 @@ void write(struct file_metadata *metadata, enum fs_retcode *return_code) {
     bool is_sector_found;
     bool is_write_complete;
     bool is_folder;
-    
+
     // Masukkan filesystem dari storage ke memori
     readSector(map_fs_buffer.is_filled, FS_MAP_SECTOR_NUMBER);
     readNodeFs(&node_fs_buffer);

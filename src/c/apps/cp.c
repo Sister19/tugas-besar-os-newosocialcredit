@@ -8,12 +8,13 @@ void main(){
     enum fs_retcode ret;
 
     byte cdir1, ldir1, cdir2, ldir2;
-    char* path1, path2;
+    char* path1, *path2;
     char name_res[14];
     // always include these three lines (message passing).
     struct shell_data data;
     struct node_entry node;
     struct node_filesystem node_fs_buffer;
+
     getShellData(&data);
     if (data.cwd.arg_count > 2) {
         readsNode(&node_fs_buffer);
@@ -33,8 +34,10 @@ void main(){
                     strncpy(metadata.node_name, node_fs_buffer.nodes[cdir1].name, 14);
                     read(&metadata, &ret);
                     metadata.parent_index = ldir2;
-                    strncpy(metadata.node_name, name_res, 14);
+                    if (strlen(name_res) != 0)
+                        strncpy(metadata.node_name, name_res, 14);
                     write(&metadata, &ret);
+
                     switch (ret){
                         case FS_SUCCESS:
                             puts("Copy success.\n");
