@@ -1,11 +1,11 @@
 #include "../library/program.h"
 #include "../library/fileio.h"
 #include "../library/textio.h"
+#include "../library/args.h"
 
 void main(){
-    byte arg_cdir, arg_ldir;
     char* path;
-    char name_res[14];
+    struct parsed_arg args;
     struct shell_data data;
     struct node_entry node;
     struct file_metadata metadata;
@@ -13,11 +13,11 @@ void main(){
     getShellData(&data);
     if (data.cwd.arg_count > 1) {
         path = data.arg.argv[1];
-        parsePathArg(path, data.cwd.current_dir, &arg_cdir, &arg_ldir, name_res, &node);
-        if (checkIsExist(path, arg_ldir) && checkIsDirectory(&node, path, arg_ldir)) {
-            metadata.parent_index = arg_ldir;
+        parsePathArg(path, data.cwd.current_dir, &args);
+        if (checkIsExist(path, args.arg_ldir) && checkIsDirectory(&node, path, args.arg_ldir)) {
+            metadata.parent_index = args.arg_ldir;
             metadata.buffer = 0;
-            strcpy(metadata.node_name, name_res);
+            strcpy(metadata.node_name, args.name_res);
             write(&metadata, &ret);
             switch (ret)
             {

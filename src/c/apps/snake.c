@@ -101,8 +101,6 @@ int main() {
         }
         setCurPos(foodPos[0], foodPos[1]);
         putc(' ', 0xC0);
-        setCurPos(0, MAX_CURSOR_Y);
-        puts("Score: "); putsc(itoa(len), COLOR_LIGHT_GREEN);
         setCurPos(MAX_CURSOR_X + 1, MAX_CURSOR_Y + 1);
         sleep(2);
     }

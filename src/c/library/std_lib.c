@@ -89,12 +89,20 @@ char str[8];
 
 char* itoa(int x)
 {
-    int i = 0;
+    int i = 0, len;
+    char temp;
     do {
         str[i++] = mod(x, 10) + '0';
         x /= 10;
     } while (x);
-    str[i] = nullt;
+    len = i;
+    i = 0;
+    while (i < len / 2) {
+        temp = str[i];
+        str[i] = str[len-i-1];
+        str[len-i-1] = temp;
+    }
+    str[len] = nullt;
     return str;
 }
 
