@@ -12,23 +12,6 @@ int mod(int a, int n);
 // Menyalin n bytes yang ditunjuk src ke dest
 void memcpy(byte *dest, byte *src, unsigned int n);
 
-// Mengembalikan panjang suatu null terminated string
-unsigned int strlen(char *string);
-
-// Mengembalikan true jika kedua string sama
-bool strcmp(char *s1, char *s2);
-
-// Melakukan penyalinan null terminated string
-// Prekondisi: dst terdefinisi, punya panjang yang sama dengan src.
-void strcpy(char *dst, char *src);
-
-// Melakukan penyalinan null terminated string mulai dari indeks 0 hingga n.
-// Prekondisi: dst terdefinisi, n lebih kecil dari src
-void strncpy(char *dst, char *src, unsigned int n);
-
-// Konkatenasi dua buah string
-void strcat(char *dst, char *src);
-
 // Mengosongkan byte array yang memiliki panjang n
 void clear(byte *ptr, unsigned int n);
 

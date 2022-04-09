@@ -2,6 +2,7 @@
 #define __KEYBOARD_H
 
 #include "../library/std_lib.h"
+#include "../library/string.h"
 #include "../includes/interrupt.h"
 #include "../includes/constant.h"
 

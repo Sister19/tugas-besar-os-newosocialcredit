@@ -3,6 +3,7 @@
 
 #include "../includes/interrupt.h"
 #include "../library/std_lib.h"
+#include "../library/string.h"
 #include "../includes/struct_fs.h"
 
 // header untuk fungsi
