@@ -22,8 +22,6 @@ bool initProgram(char* name, int segment) {
         }
         return true;
     } else {
-        putsc("No program found: ", COLOR_LIGHT_RED);
-        puts(name); endl;
         return false;
     }
 }

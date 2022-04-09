@@ -1,4 +1,6 @@
 #include "../library/program.h"
+#include "../library/textio.h"
+#include "../library/fileio.h"
 
 void printCWD(byte current_dir);
 bool __checkArgCount(int arg_count, int min_arg);

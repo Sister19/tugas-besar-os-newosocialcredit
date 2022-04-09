@@ -10,5 +10,13 @@ void getCurPos(int* x, int *y) {
     *y = REG_H(DX);
 }
 void setCurPos(int x, int y) {
-    intr(0x21, REG(0x2, 0x4), x, y, 1);
+    intr(0x21, REG(0x2, 0x4), x, y, 0);
+}
+// Sleep in dur ms
+void sleep(int dur) {
+    intr(0x21, 0x6, dur, 0, 0);
+}
+
+int getTime() {
+    return intr(0x21, REG(0x1, 0x6), 0, 0, 0);
 }

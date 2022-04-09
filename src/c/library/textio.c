@@ -1,14 +1,19 @@
 #include "textio.h"
-#include "../system/keyboard.h"
+#include "../includes/constant.h"
+#include "../includes/interrupt.h"
 
 // 0x1
 void gets(char *buf){
     intr(0x21, 0x1, buf, 0, 0);
-};
+}
 
 void get(char* scancode, char *key){
     intr(0x21, REG(0x1, 0x1), scancode, key, 0);
-};
+}
+
+void getb(char* scancode, char *key) {
+    intr(0x21, REG(0x2, 0x1), scancode, key, 0);
+}
 
 // 0x0
 void putsc(char *buf, int col) {
@@ -16,15 +21,14 @@ void putsc(char *buf, int col) {
 }
 void puts(char *buf){
     intr(0x21, REG(0x1, 0x00), buf, 0, 0);
-};
-
+}
 void put(char c){
     intr(0x21, REG(0x2, 0x00), c, 0, 0);
-};
+}
 
 void putc(char c, char color){
     intr(0x21, REG(0x3, 0x00), c, color, 0);
-};
+}
 
 void putl(char *buffer) {
     int input, scancode, i;

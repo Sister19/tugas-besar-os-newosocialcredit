@@ -3,8 +3,6 @@
 
 #include "shell_common.h"
 #include "args.h"
-#include "fileio.h"
-#include "textio.h"
 
 void exec(int segment);
 bool initProgram(char* name, int segment);

@@ -1,4 +1,7 @@
 #include "../library/program.h"
+#include "../library/fileio.h"
+#include "../library/textio.h"
+
 void cpFile(byte from, byte to, char* last_name, char* current_name);
 
 // copy file 1 (path1) to desired path (path2)

@@ -1,6 +1,8 @@
 #ifndef TEXTIO__H
 #define TEXTIO__H
 
+#include "../includes/std_type.h"
+
 // Write endline
 #define endl put('\n')
 // Write new space
@@ -16,5 +18,6 @@ void putl(char *buffer);
 // 0x1
 void gets(char *buf);
 void get(char* scancode, char *key);
+void getb(char* scancode, char *key);
 
 #endif

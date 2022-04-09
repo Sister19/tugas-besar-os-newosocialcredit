@@ -7,6 +7,12 @@ void readKey(int* scancode, int* key) {
     *key = REG_L(AX);
 }
 
+void readPress(int* scancode, int* key) {
+    int ax = getKeyPress();
+    *scancode = REG_H(ax);
+    *key = REG_L(ax);
+}
+
 char history[MAX_HIST][MAX_INPUT];
 static int hist_length = 0;
 void changeHistory(char* buffer, bool down, int *len, int *hidx, int *index) {

@@ -1,4 +1,6 @@
 #include "../library/program.h"
+#include "../includes/struct_fs.h"
+#include "../library/textio.h"
 
 void main() {
     int i = 0, cnt = 0;

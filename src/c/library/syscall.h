@@ -10,6 +10,8 @@
 void cls();
 // 0x5
 void getCurPos(int *x, int *y);
-void setCursPos(int x, int y);
-
+void setCurPos(int x, int y);
+// Sleep in dur ms
+void sleep(int dur);
+int getTime();
 #endif

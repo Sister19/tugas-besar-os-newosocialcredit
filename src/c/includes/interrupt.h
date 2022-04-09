@@ -6,7 +6,7 @@
 #define REG_L(r) (r & 0xFF)
 #define REG(h, l) ((h << 8) + l)
 // INTERRUPTS ROUTINE
-#define intr(n, a, b, c, d) interrupt(n, a, b, c, d);
+#define intr(n, a, b, c, d) interrupt(n, a, b, c, d)
 extern int interrupt(int int_number, int a, int b, int c, int d);
 
 // MEMORY SEGMENT & ADDRESSING

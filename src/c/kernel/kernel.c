@@ -47,6 +47,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
                     break;
                 case 3:
                     printCharColored(bx, cx);
+                    break;
                 default:
                     break;
             }
@@ -58,6 +59,9 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
                     break;
                 case 1:
                     readKey(bx, cx);
+                    break;
+                case 2:
+                    readPress(bx, cx);
                     break;
                 default:
                     break;
@@ -102,7 +106,12 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
                     ax = getCursorPos();
                     break;
                 case 2:
-                    setCursor(bx, cx);
+                    if (dx == 0) {
+                        intr(INT_VIDEO, AX_VIDEO_SETCURSOR, 0, 0, REG(cx, bx));
+                    } else {
+                    // use the setCursor with screen aware
+                        setCursor(bx, cx);
+                    }
                     break;
                 default:
                     break;
@@ -112,6 +121,18 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
             switch (REG_H(ax)) {
                 case 0:
                     executeProgram(bx);
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case 0x6:
+            switch (REG_H(ax)) {
+                case 0:
+                    intr(0x15, 0x8600, 0, bx, 0); // vevesleef
+                    break;
+                case 1:
+                    ax = getTime();
                     break;
                 default:
                     break;

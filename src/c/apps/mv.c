@@ -1,4 +1,6 @@
 #include "../library/program.h"
+#include "../library/fileio.h"
+#include "../library/textio.h"
 
 void main() {
     byte cdir1, ldir1, arg_cdir, arg_ldir;

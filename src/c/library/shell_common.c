@@ -1,6 +1,7 @@
 #include "shell_common.h"
 #include "syscall.h"
 #include "args.h"
+#include "textio.h"
 #include "program.h"
 
 void runner(struct shell_data* data) {
@@ -17,6 +18,9 @@ void runner(struct shell_data* data) {
             ++data->cwd.prog_count;
             setShellData(data);
             exec(segment);
+        } else {
+            putsc("No program found: ", COLOR_LIGHT_RED);
+            puts(data->arg.argv[0]); endl;
         }
     } else if (data->cwd.parse_ret == UNCLOSED_STRING) {
         putsc("Unclosed string in input!\n", COLOR_LIGHT_RED);

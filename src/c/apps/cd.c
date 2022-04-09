@@ -1,4 +1,6 @@
 #include "../library/program.h"
+#include "../includes/struct_fs.h"
+#include "../library/textio.h"
 
 void main() {
     // usage for parsing args.

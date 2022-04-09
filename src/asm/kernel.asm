@@ -8,6 +8,8 @@ global _getCursorPos
 global _putInMemory
 global _makeInterrupt21
 global _executeProgram
+global _getTime
+global _getKeyPress
 extern _handleInterrupt21
 
 _executeProgram:
@@ -56,6 +58,39 @@ _getCursorPos:
 	int 0x10
 	; return it to ax
 	mov ax,dx
+	pop cx
+	pop dx
+	pop bp
+	ret
+
+;int getTime()
+_getTime:
+	push bp
+	mov bp,sp
+	push dx
+	push cx
+	mov ax,0
+	int 1ah
+	; return it to ax
+	mov ax,dx
+	pop cx
+	pop dx
+	pop bp
+	ret
+
+;https://stackoverflow.com/questions/61484543/how-to-clear-data-from-keyboard-buffer-after-dos-int-16h-ah-1-detects-a-keypre
+;int getKeyPress()
+_getKeyPress:
+	push bp
+	mov bp,sp
+	push dx
+	push cx
+	mov ah,1
+	int 16h
+	jz end
+	mov ah,0
+	int 16h
+end:
 	pop cx
 	pop dx
 	pop bp

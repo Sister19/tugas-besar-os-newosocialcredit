@@ -38,4 +38,7 @@ char* itoa(int x);
 // Melakukan pembulatan ke atas terhadap pembagian
 int divc(int n, int div);
 
+void seed(int s);
+int rand();
+
 #endif

@@ -14,11 +14,12 @@ void writesNode(struct node_filesystem *node_fs_buffer) {
 
 void reads(byte* buf, int sec_num){
     intr(0x21, 0x2, buf, sec_num, 0);
-};
+}
 
 void writes(byte* buf, int sec_num){
     intr(0x21, REG(0x1, 0x2), buf, sec_num, 0);
-};;
+}
+
 // 0x3
 void read(struct file_metadata *metadata, enum fs_retcode *return_code){
     intr(0x21, 0x3, metadata, return_code, 0);
