@@ -23,6 +23,7 @@ OUT_KERNEL := $(OUT_DIR)$(KERNEL_DIR)
 CC := @bcc -ansi -c -O1 -o
 CC_ASM := @nasm -f as86
 LINKER := @ld86 -o
+TC ?= A
 
 define \n
 
@@ -40,8 +41,9 @@ clean:
 	@mkdir $(OUT_SYSTEM)
 	@mkdir $(OUT_KERNEL)
 tc:
-	gcc tc_gen/tc_gen.c tc_gen/tc_lib -o tc_gen/tc_gen
-	./tc_gen/tc_gen D
+	gcc tc_gen/tc_lib.c -c -o tc_gen/tc_lib.o
+	gcc tc_gen/tc_gen.c tc_gen/tc_lib.o -o tc_gen/tc_gen
+	./tc_gen/tc_gen $(TC)
 diskimage:
 	@echo "> Building disk image"
 	@dd if=/dev/zero of=$(OUT_DIR)/$(SYSTEM_IMG) bs=512 count=2880
@@ -61,26 +63,11 @@ apps:
 	$(LINKER) $(OUT_APPS)/$(basename $(file)) -d $(OUT_APPS)/$(file:%.c=%.o) \
 		$(OUT_LIB)/$(INTERRUPT_SRC:%.asm=%.o) \
 		$(foreach lib,$(LIST_LIBRARIES),$(OUT_LIB)/$(lib:%.c=%.o) )${\n})
-	# bcc -ansi -c -o out/apps/mkdir.o src/c/apps/mkdir.c
-	# bcc -ansi -c -o out/apps/cat.o src/c/apps/cat.c
-	# bcc -ansi -c -o out/apps/cd.o src/c/apps/cd.c
-	# bcc -ansi -c -o out/apps/ls.o src/c/apps/ls.c
-	# bcc -ansi -c -o out/apps/mv.o src/c/apps/mv.c
-	# bcc -ansi -c -o out/apps/cp.o src/c/apps/cp.c
-	# bcc -ansi -c -o out/apps/args.o src/c/apps/args.c
-	# bcc -ansi -c -o out/shell.o src/c/apps/shell.c
-	# bcc -ansi -c -o out/syscall.o src/c/syscall.c
-	# ld86 -o out/apps/utility -d out/shell.o out/interrupt.o out/syscall.o out/std_lib.o
-
-	# #bcc -ansi -S -o out/apps/test.s src/c/apps/test.c
-	# bcc -ansi -c -o out/shell.o src/c/apps/test.c
-	# bcc -ansi -c -o out/syscall.o src/c/syscall.c
-	# bcc -ansi -c -o out/shell_common.o src/c/apps/shell_common.c
-	# ld86 -o out/shell -d out/shell_common.o out/shell.o out/interrupt.o out/syscall.o out/std_lib.o
-	# dd if=out/shell of=out/system.img bs=512 conv=notrunc seek=272
 inject:
-	@gcc src/c/utils/inject_apps.c -o src/c/utils/inject_apps
-	./src/c/utils/inject_apps
+	@gcc tc_gen/tc_lib.c -c -o tc_gen/tc_lib.o
+	@cp tc_gen/tc_lib.o src/c/utils
+	@gcc src/c/utils/inject_apps.c src/c/utils/tc_lib.o -o src/c/utils/inject_apps
+	./src/c/utils/inject_apps $(foreach file,$(LIST_APPS),$(basename $(file)))
 system:
 	@echo "> Compiling system"
 	$(foreach file,$(LIST_SYSTEMS),\
@@ -100,5 +87,4 @@ kernel: library system
 run:
 	bochs -f src/config/if2230.config || true
 build-run: all run
-tc-run: build-run tc
-	bochs -f src/config/if2230.config || true
+tc-run: all tc run

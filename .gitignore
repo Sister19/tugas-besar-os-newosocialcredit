@@ -1,3 +1,6 @@
 .vscode
 tc_gen/tc_gen
 out/
+tc_gen/tc_lib.o
+src/c/utils/tc_lib.o
+src/c/utils/inject_apps

@@ -10,51 +10,50 @@ typedef unsigned char byte;
 // Link dengan tc_lib
 // insert_file & create_folder menerima relative pathing
 extern void insert_file(byte buf[2880][512], char *fname, byte parent_idx);
-extern void create_folder(byte buf[2880][512], char *fname, byte parent_idx);
+extern int create_folder(byte buf[2880][512], char *fname, byte parent_idx);
 
 
 
 void tc_A(byte buf[2880][512]) {
-    create_folder(buf, "folder1", 0xFF);
-    create_folder(buf, "folder2", 0);
-    create_folder(buf, "folder3", 0);
-    insert_file(buf, "tc_gen/file_src/tc_a/hehe", 2);
-    insert_file(buf, "tc_gen/file_src/tc_a/haha", 2);
-    insert_file(buf, "tc_gen/file_src/tc_a/hoho", 2);
-    create_folder(buf, "folder4", 0);
-    create_folder(buf, "folder5", 6);
-    insert_file(buf, "tc_gen/file_src/tc_a/keos", 6);
-    insert_file(buf, "tc_gen/file_src/tc_a/keoskeos", 6);
-
-    insert_file(buf, "tc_gen/file_src/tc_a/file3", 0);
-    insert_file(buf, "tc_gen/file_src/tc_a/file1", 0);
-    insert_file(buf, "tc_gen/file_src/tc_a/file2", 0);
+    int a = create_folder(buf, "folder1", 0xFF);
+    int b = create_folder(buf, "folder2", a);
+    int c = create_folder(buf, "folder3", a);
+    insert_file(buf, "tc_gen/file_src/tc_a/hehe", c);
+    insert_file(buf, "tc_gen/file_src/tc_a/haha", c);
+    insert_file(buf, "tc_gen/file_src/tc_a/hoho", c);
+    int d = create_folder(buf, "folder4", a);
+    int e = create_folder(buf, "folder5", d);
+    insert_file(buf, "tc_gen/file_src/tc_a/keos", d);
+    insert_file(buf, "tc_gen/file_src/tc_a/keoskeos", d);
+    insert_file(buf, "tc_gen/file_src/tc_a/file3", a);
+    insert_file(buf, "tc_gen/file_src/tc_a/file1", a);
+    insert_file(buf, "tc_gen/file_src/tc_a/file2", a);
     insert_file(buf, "tc_gen/file_src/tc_a/file_luar", 0xFF);
 }
 
 void tc_B(byte buf[2880][512]) {
     insert_file(buf, "tc_gen/file_src/tc_b/file_idx_0", 0xFF);
-    create_folder(buf, "folder1", 0xFF);
+    int a = create_folder(buf, "folder1", 0xFF);
     for (int i = 1; i < 62; i++) {
         char str_buf[16];
         sprintf(str_buf, "folder%d", i + 1);
-        create_folder(buf, str_buf, i);
+        a = create_folder(buf, str_buf, a);
     }
     insert_file(buf, "tc_gen/file_src/tc_b/file_idx_63", 0xFF);
 }
 
 void tc_C(byte buf[2880][512]) {
-    create_folder(buf, "A", 0xFF);
-    create_folder(buf, "test", 0);
-    create_folder(buf, "A11", 1);
+    int a = create_folder(buf, "A", 0xFF);
+    int b = create_folder(buf, "test", a);
+    create_folder(buf, "A11", b);
     create_folder(buf, "B", 0xFF);
 
-    create_folder(buf, "A2", 0);
-    create_folder(buf, "test", 4);
-    create_folder(buf, "C", 0xFF);
-    create_folder(buf, "C1", 6);
-    create_folder(buf, "C11", 7);
-    create_folder(buf, "test", 8);
+    int c = create_folder(buf, "A2", a);
+    create_folder(buf, "test", c);
+    int d = create_folder(buf, "C", 0xFF);
+    d = create_folder(buf, "C1", d);
+    d = create_folder(buf, "C11", d);
+    create_folder(buf, "test", d);
 }
 
 void tc_D(byte buf[2880][512]) {

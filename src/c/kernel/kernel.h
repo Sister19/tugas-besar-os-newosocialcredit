@@ -1,7 +1,6 @@
 #ifndef __KERNEL_H
 #define __KERNEL_H
 
-#include "../library/std_lib.h"
 #include "../includes/interrupt.h"
 
 // Fungsi bawaan

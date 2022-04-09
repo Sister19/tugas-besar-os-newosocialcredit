@@ -10,7 +10,9 @@ void runner(struct shell_data* data) {
         data->cwd.arg_count > 0 &&
         (data->cwd.parse_ret == INPUT_TRAIL || data->cwd.parse_ret == INPUT_END)
     ) {
-        segment = 0x3000 + 0x1000 * data->cwd.prog_count;
+        // since we only use one program at a time, we cycle use 0x3000 and 0x4000
+        // thus we can supply infinite amount of multi program
+        segment = 0x3000 + 0x1000 * (data->cwd.prog_count % 2);
         if(initProgram(data->arg.argv[0], segment)) {
             ++data->cwd.prog_count;
             setShellData(data);
