@@ -1,22 +1,21 @@
 #include "../library/program.h"
 #include "../includes/struct_fs.h"
 #include "../library/textio.h"
+#include "../library/args.h"
 
 void main() {
     // usage for parsing args.
-    byte arg_cdir, arg_ldir;
+    struct parsed_arg args;
     char* path;
-    char name_res[14];
     // always include these three lines (message passing).
     struct shell_data data;
-    struct node_entry node;
     getShellData(&data);
     // Check argument count. (arguments is always parsed, so don't call parseArgs again.)
     if (data.cwd.arg_count > 1) {
         path = data.arg.argv[1]; // path is in second argument (first arg is program name)
-        parsePathArg(path, data.cwd.current_dir, &arg_cdir, &arg_ldir, name_res, &node);
-        if (checkIsExist(path, arg_cdir) && checkIsDirectory(&node, path, arg_cdir)) {
-            data.cwd.current_dir = arg_cdir;
+        parsePathArg(path, data.cwd.current_dir, &args);
+        if (checkIsExist(path, args.arg_cdir) && checkIsDirectory(args.node, path, args.arg_cdir)) {
+            data.cwd.current_dir = args.arg_cdir;
             setShellData(&data);
         }
     } else {

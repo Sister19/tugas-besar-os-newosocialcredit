@@ -1,8 +1,8 @@
 #include "shell_common.h"
-#include "syscall.h"
 #include "args.h"
 #include "textio.h"
 #include "program.h"
+#include "fileio.h"
 
 void runner(struct shell_data* data) {
     int segment;

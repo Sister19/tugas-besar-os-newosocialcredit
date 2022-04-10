@@ -1,6 +1,7 @@
 #include "../library/program.h"
 #include "../library/fileio.h"
 #include "../library/textio.h"
+#include "../library/args.h"
 
 void main() {
     int i, r;
@@ -9,20 +10,18 @@ void main() {
     enum fs_retcode ret;
     byte buffer[512*16];
     // argparse
-    byte arg_cdir, arg_ldir;
+    struct parsed_arg args;
     char* path;
-    char name_res[14];
     // always include these three lines (message passing).
     struct shell_data data;
-    struct node_entry node;
     getShellData(&data);
     if (data.cwd.arg_count > 1) {
         path = data.arg.argv[1];
-        parsePathArg(path, data.cwd.current_dir, &arg_cdir, &arg_ldir, name_res, &node);
-        if (checkIsExist(path, arg_cdir) && checkIsFile(&node, path, arg_cdir)) {
-            metadata.parent_index = arg_ldir;
+        parsePathArg(path, data.cwd.current_dir, &args);
+        if (checkIsExist(path, args.arg_cdir) && checkIsFile(args.node, path, args.arg_cdir)) {
+            metadata.parent_index = args.arg_ldir;
             metadata.buffer = buffer;
-            strcpy(metadata.node_name, name_res);
+            strcpy(metadata.node_name, args.name_res);
             read(&metadata, &ret);
             switch (ret)
             {

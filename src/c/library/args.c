@@ -1,5 +1,8 @@
 #include "args.h"
 #include "textio.h"
+#include "shell_common.h"
+#include "fileio.h"
+#include "std_lib.h"
 
 bool isDirectory(struct node_entry *node, byte cdir) {
     if (
@@ -37,53 +40,54 @@ bool checkIsExist(char* path, byte cdir) {
     return true;
 }
 
-void __applyPath(struct node_filesystem* node_fs_buffer, char* path, int dot_cnt, int len, byte* arg_cdir, byte* arg_ldir, char* name_res) {
-    if (*arg_cdir == IDX_NODE_UNDEF) { // if cdir already undef, last set to undef
-        *arg_ldir = IDX_NODE_UNDEF;
+void __applyPath(struct node_filesystem* node_fs_buffer, int dot_cnt, int len, struct parsed_arg *res) {
+    if (res->arg_cdir == IDX_NODE_UNDEF) { // if cdir already undef, last set to undef
+        res->arg_ldir = IDX_NODE_UNDEF;
     } else if (dot_cnt == 2 && len == 2) { // go up
-        if (*arg_cdir != FS_NODE_P_IDX_ROOT) { // if not root, we can go up
-            *arg_ldir = *arg_cdir;
-            *arg_cdir = node_fs_buffer->nodes[*arg_cdir].parent_node_index;
+        if (res->arg_cdir != FS_NODE_P_IDX_ROOT) { // if not root, we can go up
+            res->arg_ldir = res->arg_cdir;
+            res->arg_cdir = node_fs_buffer->nodes[res->arg_cdir].parent_node_index;
         }
-    } else if (len > 0 && !(len == 1 && name_res[0] == '.')) { // at least len > 0 and not .
-        name_res[len] = nullt;
-        *arg_ldir = *arg_cdir;
-        *arg_cdir = getNodeIdx(node_fs_buffer, name_res, *arg_cdir);
+    } else if (len > 0 && !(len == 1 && res->name_res[0] == '.')) { // at least len > 0 and not .
+        res->name_res[len] = nullt;
+        res->arg_ldir = res->arg_cdir;
+        res->arg_cdir = getNodeIdx(node_fs_buffer, res->name_res, res->arg_cdir);
     }
 }
 
-void parsePathArg(char* path, byte current_dir, byte* arg_cdir, byte* arg_ldir, char* name_res, struct node_entry *node) {
+void parsePathArg(char* path, byte current_dir, struct parsed_arg *res) {
     struct node_filesystem node_fs_buffer;
     byte dot_cnt = 0;
     int i = 0, len = 0;
     readsNode(&node_fs_buffer);
-    *arg_cdir = current_dir;
-    *arg_ldir = current_dir;
+    res->arg_cdir = current_dir;
+    res->arg_ldir = current_dir;
     if (path[i] == '/' || path[i] == '\\') {
-        *arg_cdir = FS_NODE_P_IDX_ROOT;
-        *arg_ldir = *arg_cdir;
+        res->arg_cdir = FS_NODE_P_IDX_ROOT;
+        res->arg_ldir = res->arg_cdir;
         ++i;
     }
     while (path[i] != nullt) {
         if (path[i] == '.') ++dot_cnt;
         if (path[i] == '/' || path[i] == '\\') { // start to parse a new dir
-            __applyPath(&node_fs_buffer, path, dot_cnt, len, arg_cdir, arg_ldir, name_res);
+            __applyPath(&node_fs_buffer, dot_cnt, len, res);
             len = 0;
             dot_cnt = 0;
         } else { // add to input
             if (len < 13)
-                name_res[len++] = path[i];
+                res->name_res[len++] = path[i];
         }
         i++;
     }
+    
     if (len > 0) // remains.
-        __applyPath(&node_fs_buffer, path, dot_cnt, len, arg_cdir, arg_ldir, name_res);
-    if (*arg_cdir != IDX_NODE_UNDEF) {
-        if (*arg_cdir != FS_NODE_P_IDX_ROOT)
-            *node = node_fs_buffer.nodes[*arg_cdir];
-    } else if(*arg_ldir != IDX_NODE_UNDEF) {
-        if (*arg_ldir != FS_NODE_P_IDX_ROOT)
-            *node = node_fs_buffer.nodes[*arg_ldir];
+        __applyPath(&node_fs_buffer, dot_cnt, len, res);
+    if (res->arg_cdir != IDX_NODE_UNDEF) {
+        if (res->arg_cdir != FS_NODE_P_IDX_ROOT)
+            res->node = &node_fs_buffer.nodes[res->arg_cdir];
+    } else if(res->arg_ldir != IDX_NODE_UNDEF) {
+        if (res->arg_ldir != FS_NODE_P_IDX_ROOT)
+            res->node = &node_fs_buffer.nodes[res->arg_ldir];
     }
 }
 
