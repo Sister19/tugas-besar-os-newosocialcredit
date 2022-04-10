@@ -2,6 +2,7 @@
 #include "textio.h"
 #include "shell_common.h"
 #include "fileio.h"
+#include "std_lib.h"
 
 bool isDirectory(struct node_entry *node, byte cdir) {
     if (
@@ -66,7 +67,6 @@ void parsePathArg(char* path, byte current_dir, struct parsed_arg *res) {
         res->arg_ldir = res->arg_cdir;
         ++i;
     }
-        puts("a");
     while (path[i] != nullt) {
         if (path[i] == '.') ++dot_cnt;
         if (path[i] == '/' || path[i] == '\\') { // start to parse a new dir
@@ -80,15 +80,14 @@ void parsePathArg(char* path, byte current_dir, struct parsed_arg *res) {
         i++;
     }
     
-    puts("a");
     if (len > 0) // remains.
         __applyPath(&node_fs_buffer, dot_cnt, len, res);
     if (res->arg_cdir != IDX_NODE_UNDEF) {
         if (res->arg_cdir != FS_NODE_P_IDX_ROOT)
-            *(res->node) = node_fs_buffer.nodes[res->arg_cdir];
+            res->node = &node_fs_buffer.nodes[res->arg_cdir];
     } else if(res->arg_ldir != IDX_NODE_UNDEF) {
         if (res->arg_ldir != FS_NODE_P_IDX_ROOT)
-            *(res->node) = node_fs_buffer.nodes[res->arg_ldir];
+            res->node = &node_fs_buffer.nodes[res->arg_ldir];
     }
 }
 
