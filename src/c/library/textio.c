@@ -4,7 +4,12 @@
 
 // 0x1
 void gets(char *buf){
-    intr(0x21, 0x1, buf, 0, 0);
+    intr(0x21, 0x1, buf, MAX_INPUT, true);
+}
+
+// get n char without history
+void getsn(char *buf, int n){
+    intr(0x21, 0x1, buf, n, false);
 }
 
 void get(char* scancode, char *key){

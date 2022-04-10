@@ -55,7 +55,7 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
         case 0x1: // keyboard input / stdin
             switch (REG_H(ax)) {
                 case 0:
-                    readString(bx);
+                    readString(bx, cx, dx);
                     break;
                 case 1:
                     readKey(bx, cx);
@@ -112,6 +112,12 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
                     // use the setCursor with screen aware
                         setCursor(bx, cx);
                     }
+                    break;
+                case 3:
+                    if (dx == 0)
+                        forwardCursor();
+                    else
+                        backwardCursor();
                     break;
                 default:
                     break;

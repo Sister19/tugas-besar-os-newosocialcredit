@@ -38,6 +38,7 @@ extern int interrupt(int int_number, int a, int b, int c, int d);
 // http://www.ctyme.com/intr/rb-0096.htm
 // 0x00 al clear the entire window
 #define AX_VIDEO_SCROLLUP(x) (0x0600 | x)
+#define AX_VIDEO_SCROLLDOWN(x) (0x0700 | x)
 // Character color write (bx)
 // bh = BIOS color attribute
 #define BX_VIDEO_COLOR(col) (col << 8)

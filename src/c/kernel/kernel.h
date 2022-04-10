@@ -11,7 +11,6 @@ extern int getTime();
 
 void handleInterrupt21(int ax, int bx, int cx, int dx);
 
-void readString(char *string);
 void printTitle();
 int main();
 

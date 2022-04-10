@@ -17,6 +17,7 @@ void putl(char *buffer);
 
 // 0x1
 void gets(char *buf);
+void getsn(char *buf, int n);
 void get(char* scancode, char *key);
 void getb(char* scancode, char *key);
 

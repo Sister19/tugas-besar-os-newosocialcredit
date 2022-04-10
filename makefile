@@ -8,11 +8,14 @@ LIBRARY_DIR := /library
 SRC_LIB := $(SRC_DIR)$(LIBRARY_DIR)
 OUT_LIB := $(OUT_DIR)$(LIBRARY_DIR)
 LIST_LIBRARIES := $(notdir $(wildcard $(SRC_LIB)/*.c))
-LIST_LIB_NO_SYSCALL := $(filter-out syscall.c,$(LIST_LIBRARIES))
+LIST_LIB_SYSCALL := syscall.c fileio.c program.c shell_common.c textio.c args.c
+LIST_LIB_NO_SYSCALL := $(filter-out $(LIST_LIB_SYSCALL),$(LIST_LIBRARIES))
 APPS_DIR := /apps
 SRC_APPS := $(SRC_DIR)$(APPS_DIR)
 OUT_APPS := $(OUT_DIR)$(APPS_DIR)
-LIST_APPS := $(notdir $(wildcard $(SRC_APPS)/*.c))
+LIST_ALL_APPS := $(notdir $(wildcard $(SRC_APPS)/*.c))
+APPS ?= $(basename $(LIST_ALL_APPS))
+LIST_APPS := $(foreach app,$(APPS),$(filter $(app).c,$(LIST_ALL_APPS)))
 SYSTEM_DIR := /system
 SRC_SYSTEM := $(SRC_DIR)$(SYSTEM_DIR)
 OUT_SYSTEM := $(OUT_DIR)$(SYSTEM_DIR)
@@ -29,7 +32,9 @@ define \n
 
 
 endef
-	
+
+a:
+	@echo $(LIST_APPS)
 all: clean diskimage bootloader kernel apps inject
 clean:
 	@echo "> Clearing older build"

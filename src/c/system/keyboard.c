@@ -34,7 +34,7 @@ void changeHistory(char* buffer, bool down, int *len, int *hidx, int *index) {
     *index = *len;
 }
 
-void readString(char *buffer)
+void readString(char *buffer, int n, bool useHistory)
 {
     int i = 0;
     int index = 0, len = 0, hidx = hist_length;
@@ -42,7 +42,13 @@ void readString(char *buffer)
     int x, y;
     getCursor(&x, &y);
     startCursor(&x, &y);
-    clear(buffer, MAX_INPUT);
+    if (useHistory)
+        clear(buffer, n);
+    else {
+        printString(buffer);
+        len = strlen(buffer);
+        index = len - 1;
+    }
     while (true)
     {
         // get interrupt for 0x16 (used to scan keyboard input)
@@ -57,10 +63,10 @@ void readString(char *buffer)
             forwardCursor();
         }
         // if there's history, we cycle it
-        else if (scancode == SC_UARROW && hidx > 0) {
+        else if (scancode == SC_UARROW && hidx > 0 && useHistory) {
             changeHistory(buffer, false, &len, &hidx, &index);
         }
-        else if (scancode == SC_DARROW && hidx < hist_length - 1) {
+        else if (scancode == SC_DARROW && hidx < hist_length - 1 && useHistory) {
             changeHistory(buffer, true, &len, &hidx, &index);
         }
         // if CTRL+C, cancel input
@@ -73,7 +79,7 @@ void readString(char *buffer)
         else if (input == KEY_CR || input == KEY_LF)
         {
             buffer[len] = nullt;
-            if (len > 0){
+            if (len > 0 && useHistory){
                 if (hist_length == MAX_HIST) {
                     i = 0;
                     while (i < MAX_HIST - 1) {
@@ -112,7 +118,7 @@ void readString(char *buffer)
             setCursor(x, y);
         }
         // get the input if it's a printable character
-        else if (IS_PRINTABLE(input) && len < MAX_INPUT - 1) // left for nullt
+        else if (IS_PRINTABLE(input) && len < n - 1) // left for nullt
         {
             for (i = len++; i > index; i--) {
                 buffer[i] = buffer[i - 1];

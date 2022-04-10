@@ -10,7 +10,7 @@
 #define IS_PRINTABLE(input) (input >= 0x20 && input <= 0x7e)
 
 extern int getKeyPress();
-void readString(char* buffer);
+void readString(char *buffer, int n, bool useHistory);
 void readKey(int* scancode, int* key);
 bool bufferKey(int* scancode, int* key);
 

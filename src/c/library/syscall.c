@@ -12,6 +12,11 @@ void getCurPos(int* x, int *y) {
 void setCurPos(int x, int y) {
     intr(0x21, REG(0x2, 0x4), x, y, 0);
 }
+
+void moveCursor(bool backward) {
+    intr(0x21, REG(0x3, 0x4), 0, 0, backward);
+}
+
 // Sleep in dur ms
 void sleep(int dur) {
     intr(0x21, 0x6, dur, 0, 0);

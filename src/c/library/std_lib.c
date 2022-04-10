@@ -44,6 +44,7 @@ char* itoa(int x)
         temp = str[i];
         str[i] = str[len-i-1];
         str[len-i-1] = temp;
+        i++;
     }
     str[len] = nullt;
     return str;

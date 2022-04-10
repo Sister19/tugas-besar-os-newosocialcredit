@@ -11,6 +11,7 @@ void cls();
 // 0x5
 void getCurPos(int *x, int *y);
 void setCurPos(int x, int y);
+void moveCursor(bool backward);
 // Sleep in dur ms
 void sleep(int dur);
 int getTime();
