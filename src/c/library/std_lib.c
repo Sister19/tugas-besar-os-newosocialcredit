@@ -55,17 +55,15 @@ int divc(int n, int div){
 }
 
 // Xorshift LSFR (Linear-Feedback Shift Register) PRNG
-// 2^64-1 period for 64bit integers
+// 2^16-1 period for 16bit integers
 // Based on Marsaglia, George. 2003. Xorshift RNGs. https://www.jstatsoft.org/article/view/v008i14/xorshift.pdf
-int MAX_INT = 0xff00;
-static int state = 0;
+static int state = 1;
 void seed(int s) {
     state = s;
 }
 int rand() {
-    state ^= (state << 3);
-    state ^= (state >> 5);
     state ^= (state << 7);
-    state &= MAX_INT;
+    state ^= (state >> 9);
+    state ^= (state << 8);
     return state;
 }

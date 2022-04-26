@@ -46,9 +46,10 @@ clean:
 	@mkdir $(OUT_SYSTEM)
 	@mkdir $(OUT_KERNEL)
 tc:
-	gcc tc_gen/tc_lib.c -c -o tc_gen/tc_lib.o
-	gcc tc_gen/tc_gen.c tc_gen/tc_lib.o -o tc_gen/tc_gen
-	./tc_gen/tc_gen $(TC)
+	@echo "> Generating test case"
+	@gcc tc_gen/tc_lib.c -c -o tc_gen/tc_lib.o
+	@gcc tc_gen/tc_gen.c tc_gen/tc_lib.o -o tc_gen/tc_gen
+	@./tc_gen/tc_gen $(TC)
 diskimage:
 	@echo "> Building disk image"
 	@dd if=/dev/zero of=$(OUT_DIR)/$(SYSTEM_IMG) bs=512 count=2880
@@ -90,6 +91,7 @@ kernel: library system
 	@echo "> Copying kernel to disk image"
 	@dd if=$(OUT_DIR)$(KERNEL_DIR)/$(KERNEL_NAME) of=$(OUT_DIR)/$(SYSTEM_IMG) bs=512 conv=notrunc seek=1
 run:
+	@echo "> Running the OS"
 	bochs -f src/config/if2230.config || true
 build-run: all run
 tc-run: all tc run

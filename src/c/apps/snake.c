@@ -2,6 +2,8 @@
 #include "../library/textio.h"
 #include "../library/syscall.h"
 
+void endGame(int len, struct shell_data* data);
+
 int main() {
     struct shell_data data;
     int i, cur_idx = 0, dir = 0; // 0 = right / 1 = down / 2 = left / 3 = up
@@ -16,16 +18,16 @@ int main() {
     }
     seed(getTime());
     snakePos[0][0] = mod(rand(), 80);
-    snakePos[0][1] = mod(rand(), 25);
+    snakePos[0][1] = mod(rand(), 24);
     foodPos[0] = mod(rand(), 80);
-    foodPos[1] = mod(rand(), 25);
+    foodPos[1] = mod(rand(), 24);
     while (true) {
         // clearScreen
         cls();
         if (snakePos[cur_idx][0] == foodPos[0] && snakePos[cur_idx][1] == foodPos[1]) {
             len++;
             foodPos[0] = mod(rand(), 80);
-            foodPos[1] = mod(rand(), 25);
+            foodPos[1] = mod(rand(), 24);
         }
         getb(&scancode, &inp);
         if (scancode == SC_CTRL && inp == 0x3) {
@@ -69,25 +71,16 @@ int main() {
             curPos[1] = 0;
         }
         cnt = 0;
+        if (len > 99) {
+            setCurPos((80 - 24) / 2, (25 - 3) / 2);
+            putsc("Max score limit reached!", COLOR_LIGHT_GREEN);
+            endGame(len, &data);
+        }
         for (i = 0; i < 100; i++) {
             if (curPos[0] == snakePos[i][0] && curPos[1] == snakePos[i][1] && ++cnt > 1) {
                 setCurPos((80 - 9) / 2, (25 - 3) / 2);
                 putsc("You lose!", COLOR_LIGHT_RED);
-                setCurPos((80 - 9) / 2, (25 - 3) / 2 + 1);
-                puts("Score: "); putsc(itoa(len), COLOR_LIGHT_GREEN);
-                setCurPos((80 - 25) / 2, (25 - 3) / 2 + 2);
-                putsc("Try again (R) or exit (C)", COLOR_LIGHT_CYAN);
-                setCurPos(MAX_CURSOR_X + 1, MAX_CURSOR_Y + 1);
-                while (true) {
-                    get(&scancode, &inp);
-                    if (inp == 'R' || inp == 'r') {
-                        cls();
-                        exec(((data.cwd.prog_count-1) % 2) * 0x1000 + 0x3000);
-                    } else if (inp == 'C' || inp == 'c') {
-                        cls();
-                        exit(&data);
-                    }
-                }
+                endGame(len, &data);
             }
         }
         curPos = snakePos[mod((cur_idx - len), 100)];
@@ -101,7 +94,28 @@ int main() {
         }
         setCurPos(foodPos[0], foodPos[1]);
         putc(' ', 0xC0);
+        setCurPos(0, MAX_CURSOR_Y);
+        puts("Score: "); putsc(itoa(len-1), COLOR_LIGHT_GREEN);
         setCurPos(MAX_CURSOR_X + 1, MAX_CURSOR_Y + 1);
         sleep(2);
+    }
+}
+
+void endGame(int len, struct shell_data* data) {
+    int scancode, inp;
+    setCurPos((80 - 9) / 2, (25 - 3) / 2 + 1);
+    puts("Score: "); putsc(itoa(len-1), COLOR_LIGHT_GREEN);
+    setCurPos((80 - 25) / 2, (25 - 3) / 2 + 2);
+    putsc("Try again (R) or exit (C)", COLOR_LIGHT_CYAN);
+    setCurPos(MAX_CURSOR_X + 1, MAX_CURSOR_Y + 1);
+    while (true) {
+        get(&scancode, &inp);
+        if (inp == 'R' || inp == 'r') {
+            cls();
+            exec(((data->cwd.prog_count-1) % 2) * 0x1000 + 0x3000);
+        } else if (inp == 'C' || inp == 'c') {
+            cls();
+            exit(data);
+        }
     }
 }

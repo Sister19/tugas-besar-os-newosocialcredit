@@ -7,9 +7,11 @@
 #define IS_PRINTABLE(input) (input >= 0x20 && input <= 0x7e)
 
 char buffer[8192];
-int start, index, x, y, len;
+int start, index, x, y, len, end;
 
-void setXY(int _y, bool forward, bool keepX);
+void indexGo(bool forward);
+void cursorGo(bool forward);
+void scroll(bool up);
 
 int main() {
     int i, j, k, lenTitle = 13, lines;
@@ -71,6 +73,7 @@ int main() {
         // print text
         lines = 1;
         i = start;
+        end = start;
         j = 0;
         while (buffer[i] != nullt) {
             if (buffer[i] == '\n' || j > MAX_CURSOR_X) {
@@ -82,6 +85,7 @@ int main() {
             put(buffer[i]);
             ++j;
             ++i;
+            ++end;
         }
         // print bottom
         if (isSaving) {
@@ -106,54 +110,28 @@ int main() {
             setCurPos(x, y);
             get(&scancode, &input);
             if (scancode == SC_LARROW && index > 0) {
-                setXY(y, false, false);
+                cursorGo(false);
             }
             else if (scancode == SC_RARROW && index < len) {
-                setXY(y, true, false);
+                cursorGo(true);
             }
             else if (scancode == SC_UARROW) {
-                setXY(y - 1, false, true);
-                // index -= x; // skip till last newline
-                // i = index;
-                // j = MAX_CURSOR_X;
-                // while (i >= 0) {
-                //     if (buffer[i] == '\n' || j < 0)
-                //         break;
-                //     --i;
-                //     --j;
-                // }
-                // j = MAX_CURSOR_X - j; // dapetin x
-                // if (x > j) x = j;
-                // --y;
-                // index += x;
+                if (y == 1)
+                    // scroll down
+                    scroll(false);
+                else
+                    indexGo(false);
             }
             else if (scancode == SC_DARROW) {
-                setXY(y + 1, true, true);
-                // i = index;
-                // j = x;
-                // while (buffer[i] != nullt) {
-                //     if (buffer[i] == '\n' || j > MAX_CURSOR_X)
-                //         break;
-                //     ++i;
-                //     ++j;
-                // }
-                // index += j - x; // skip till newline
-                // j = 0;
-                // while (buffer[i] != nullt) {
-                //     if (buffer[i] == '\n' || j > MAX_CURSOR_X)
-                //         break;
-                //     ++i;
-                //     ++j;
-                // }
-                // if (x > j) x = j;
-                // ++y;
-                // index += x;
+                if (y == 23)
+                    // scroll up
+                    scroll(true);
+                else
+                    indexGo(true);
             }
             else if (input == KEY_BKSP && index > 0) {
                 for (i = --index; i < len - 1; i++)
-                {
                     buffer[i] = buffer[i + 1];
-                }
                 buffer[--len] = nullt;
                 moveCursor(true);
                 getCurPos(&x, &y);
@@ -178,123 +156,42 @@ int main() {
     }
 }
 
-// int getIndex(int x, int y) {
-//     int i, j, len, lines;
-//     i = start;
-//     j = 0;
-//     len = 0;
-//     lines = 0;
-//     while (buffer[i] != nullt) {
-//         if (buffer[i] == '\n' || j > MAX_CURSOR_X) {
-//             len = j;
-//             j = 0;
-//             lines++;
-//         }
-//         if (lines == y)
-//             break;
-//         ++j;
-//         ++i;
-//     }
-//     if (buffer[i] == nullt)
-//         len = j;
-//     return len;
-// }
-
-// void getPos(int index, int* x, int* y) {
-//     int i;
-//     i = start;
-//     *x = 0;
-//     *y = 1;
-//     while(i < 8192 && i != index) {
-//         if (buffer[i] == '\n' || *x > MAX_CURSOR_X) {
-//             *x = -1; // compensate for x++
-//             ++(*y);
-//         }
-//         ++(*x);
-//         ++i;
-//     }
-// }
-
-int getLen(int _y) {
-    int i, j, len, lines;
-    i = start;
-    j = 0;
-    len = 0;
-    lines = 0;
-    while (buffer[i] != nullt) {
-        if (buffer[i] == '\n' || j > MAX_CURSOR_X) {
-            len = j;
-            j = 0;
-            lines++;
+void cursorGo(bool forward) {
+    int i, j, len;
+    if (forward && ((index < 8192 && buffer[index] == '\n') || x == MAX_CURSOR_X)) {
+        x = 0;
+        if (y == 23) {
+            // scroll up
+            scroll(true);
+        } else {
+            ++y;
         }
-        if (lines == _y)
-            break;
-        ++j;
-        ++i;
-    }
-    if (buffer[i] == nullt)
-        len = j;
-    return len;
-}
-
-int calculateDelta(int _x, int _y, bool forward) {
-    int i = index, cnt = 0;
-    if (forward) {
-        while (i < len) {
-            if (x == _x && y == _y) break;
-            if (buffer[i] == '\n' || _x > MAX_CURSOR_X) {
-                _x = 0;
-                ++y;
-            }
-            ++cnt;
-            ++i;
+    } else if (!forward && x == 0) {
+        if (y == 1) {
+            //scroll down
+            scroll(false);
+        } else {
+            --y;
+        }
+        i = index - 2;
+        while (i >= 0 && buffer[i] != '\n') {
+            ++x; --i;
+            if (x > MAX_CURSOR_X) x = 0;
         }
     } else {
-        while (i >= 0) {
-            if (x == _x && y == _y) break;
-            if (buffer[i] == '\n' || _x < 0) {
-                _x = MAX_CURSOR_X;
-                --y;
-            }
-            --cnt;
-            --i;
-        }
+        if (forward) ++x;
+        else --x;
     }
-    return cnt;
+    index += forward ? 1 : -1;
 }
 
-void setXY(int _y, bool forward, bool keepX) {
-    int i, j, k, l;
-    int _x = x + (keepX ? 0 : (forward ? 1: -1));
-    // update index in x (after update y if any)
-    if (_x < 0) { // mentok ke kiri
-        --_y;
-        _x = getLen(_y);
-    } else {
-        l = getLen(_y);
-        if (_x > l) { // mentok ke kanan
-            ++_y;
-            _x = 0;
-        }
-    }
-    // update start
-    if (_y < 1) {
-        // geser kebawah kalau masih ada
-        _y = 1;
-        if (start > 0) {
-            i = start - 1;
-            j = x;
-            while (i > 0) {
-                if (buffer[i] == '\n' || j < 0)
-                    break;
-                --i;
-                --j;
-            }
-            start = --i;
-        }
-    } else if (_y > MAX_CURSOR_Y - 1) {
+void scroll(bool up) {
+    int i, j;
+    if (up) {
         // geser keatas
-        _y = MAX_CURSOR_Y - 1;
+        if (end > len - 1) return;
+        indexGo(true);
+        y = MAX_CURSOR_Y - 1;
         i = start;
         j = x;
         while (buffer[i] != nullt) {
@@ -303,130 +200,48 @@ void setXY(int _y, bool forward, bool keepX) {
             ++i;
             ++j;
         }
-        if (buffer[++i] != nullt)
-            start = i;
+        start = ++i;
+    } else {
+        // geser kebawah
+        //WIP
+        if (start == 0) return;
+        --start;
+        j = 0;
+        while (start > 0) {
+            if (buffer[start] == '\n' || j > MAX_CURSOR_X)
+                break;
+            --start;
+            ++j;
+        }
+        indexGo(false);
+        y = 1;
     }
-    index += calculateDelta(_x, _y, forward);
-    // int i, j, idx;
-    // int i, j, k, lines, l;
-    // if (_x < 0) {
-    //     --_y;
-    //     l = getLen(_y);
-    //     if (keepX) {
-    //         if (_x > l) _x = l;
-    //         index -= l - _x;
-    //     } else {
-    //         _x = l;
-    //     }
-    // } else {
-    //     l = getLen(_y);
-    //     if (_x > l) {
-    //         ++_y;
-    //         index += _x - l;
-    //         if (keepX) {
-    //             l = getLen(_y);
-    //             if (_x > l) _x = l;
-    //             index += _x;
-    //         } else {
-    //             _x = 0;
-    //         }
-    //     }
-    // }
-    // index += _x - x;
-    // if (y < _y) {
-    //     index += getLen(y);
-    // } else if (y > _y) {
-    //     index -= getLen(y);
-    // }
-    // // if (y < _y) { // kebawah
+}
 
-    // // } else if (y > _y) { // keatas
-    // //     i = index;
-    // //     j = x;
-    // //     lines = 0;
-    // //     while (buffer[i] != nullt) {
-    // //         if (buffer[i] == '\n' || j > MAX_CURSOR_X){
-    // //             ++lines;
-    // //             len = j;
-    // //             j = 0;
-    // //         }
-    // //         if (lines < _y - y)
-    // //             break;
-    // //         ++i;
-    // //         ++j;
-    // //     }
-    // // }
-    // // // determine _x and index
-    // // if (y < _y) { // mau kebawah
-    // //     i = index;
-    // //     j = x;
-    // //     while (buffer[i] != nullt) {
-    // //         if (buffer[i] == '\n' || j > MAX_CURSOR_X)
-    // //             break;
-    // //         ++i;
-    // //         ++j;
-    // //     }
-    // //     // find length
-    // //     k = i++;
-    // //     j = 0;
-    // //     while (buffer[i] != nullt) {
-    // //         if (buffer[i] == '\n' || j > MAX_CURSOR_X)
-    // //             break;
-    // //         ++i;
-    // //         ++j;
-    // //     }
-    // //     len = i - k;
-    // //     _x = x > len ? len : x;
-    // //     index += k + _x - 1;
-    // // } else if (y > _y) { // mau keatas
-    // //     i = index;
-    // //     j = x;
-    // //     while (i >= 0) {
-    // //         if (buffer[i] == '\n' || j < 0)
-    // //             break;
-    // //         --j;
-    // //         --i;
-    // //     }
-    // //     // find length
-    // //     k = i--;
-    // //     j = MAX_CURSOR_X;
-    // //     while (buffer[i] != nullt) {
-    // //         if (buffer[i] == '\n' || j < 0)
-    // //             break;
-    // //         --j;
-    // //         --i;
-    // //     }
-    // //     len = k - i;
-    // //     _x = x > len ? len : x;
-    // //     index -= k + _x - 1;
-    // // } else {
-    // //     index += _x - x;
-    // // }
-    // // scrolling upmost/downmost
-    // if (_y < 1) {
-    //     // geser kebawah
-    //     _y = 1;
-    //     i = start;
-    //     j = x;
-    //     while (i >= 0) {
-    //         if (buffer[i] == '\n' || j > MAX_CURSOR_X)
-    //             break;
-    //         --i;
-    //         ++j;
-    //     }
-    //     start = --i;
-    // } else if (_y > MAX_CURSOR_Y - 1) {
-    //     // geser keatas
-    //     _y = MAX_CURSOR_Y - 1;
-    //     i = start;
-    //     j = x;
-    //     while (buffer[i] != nullt) {
-    //         if (buffer[i] == '\n' || j > MAX_CURSOR_X)
-    //             break;
-    //         ++i;
-    //         ++j;
-    //     }
-    //     start = ++i;
-    // }
-    x = _x; y = _y;
+void indexGo(bool forward) {
+    int i, j, k;
+    if (forward) {
+        k = x;
+        i = index;
+        j = x;
+        while (i < len && buffer[i] != '\n' && j < MAX_CURSOR_X) {
+            ++i; ++j;
+        }
+        if (buffer[i] == '\n') ++i;
+        index = i;
+        if (j >= MAX_CURSOR_X) x = -1; else x = 0;
+        ++y;
+        while (x < k && buffer[index] != '\n') {
+            ++index; ++x;
+        }
+    } else {
+        i = x;
+        index -= x; x = 0;
+        if (buffer[index] == '\n') --index;
+        cursorGo(false);
+        if (i < x) {
+            index -= x-i;
+            x = i;
+        }
+    }
 }
