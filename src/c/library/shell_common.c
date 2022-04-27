@@ -6,6 +6,7 @@
 
 void runner(struct shell_data* data) {
     int segment;
+    struct parsed_arg args;
     parseArgs(data);
     if (
         data->cwd.arg_count > 0 &&
@@ -14,7 +15,8 @@ void runner(struct shell_data* data) {
         // since we only use one program at a time, we cycle use 0x3000 and 0x4000
         // thus we can supply infinite amount of multi program
         segment = 0x3000 + 0x1000 * (data->cwd.prog_count % 2);
-        if(initProgram(data->arg.argv[0], segment)) {
+        parsePathArg(data->arg.argv[0], data->cwd.current_dir, &args);
+        if(initProgram(&args, segment)) {
             ++data->cwd.prog_count;
             setShellData(data);
             exec(segment);

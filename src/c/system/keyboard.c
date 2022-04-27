@@ -47,7 +47,7 @@ void readString(char *buffer, int n, bool useHistory)
     else {
         printString(buffer);
         len = strlen(buffer);
-        index = len - 1;
+        index = len;
     }
     while (true)
     {

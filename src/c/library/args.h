@@ -9,6 +9,7 @@ struct parsed_arg {
     byte arg_ldir;
     char name_res[14];
     struct node_entry *node;
+    bool is_traversed; // is traversed with apply path (absolute/relative)
 };
 
 bool isDirectory(struct node_entry *node, byte cdir);

@@ -92,6 +92,6 @@ kernel: library system
 	@dd if=$(OUT_DIR)$(KERNEL_DIR)/$(KERNEL_NAME) of=$(OUT_DIR)/$(SYSTEM_IMG) bs=512 conv=notrunc seek=1
 run:
 	@echo "> Running the OS"
-	bochs -f src/config/if2230.config || true
+	echo c | bochs -f src/config/if2230.config || true
 build-run: all run
 tc-run: all tc run

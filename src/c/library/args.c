@@ -62,9 +62,11 @@ void parsePathArg(char* path, byte current_dir, struct parsed_arg *res) {
     readsNode(&node_fs_buffer);
     res->arg_cdir = current_dir;
     res->arg_ldir = current_dir;
-    if (path[i] == '/' || path[i] == '\\') {
+    res->is_traversed = false;
+    if (path[i] == '/' || path[i] == '\\') { // starts from root
         res->arg_cdir = FS_NODE_P_IDX_ROOT;
         res->arg_ldir = res->arg_cdir;
+        res->is_traversed = true;
         ++i;
     }
     while (path[i] != nullt) {
@@ -73,6 +75,7 @@ void parsePathArg(char* path, byte current_dir, struct parsed_arg *res) {
             __applyPath(&node_fs_buffer, dot_cnt, len, res);
             len = 0;
             dot_cnt = 0;
+            res->is_traversed = true;
         } else { // add to input
             if (len < 13)
                 res->name_res[len++] = path[i];
