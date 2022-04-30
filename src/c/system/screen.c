@@ -140,10 +140,20 @@ void deleteChar()
 
 void printTitle()
 {
-    printStringColored("      ___       __   __  ", COLOR_LIGHT_GREEN); endl;
-    printStringColored("|\\ | |__  |  | /  \\ /__` ", COLOR_LIGHT_GREEN); endl;
-    printStringColored("| \\| |___ |/\\| \\__/ .__/ ", COLOR_LIGHT_GREEN); endl;
-    printStringColored("v.2.0.0  - Milestone 2 Project", COLOR_LIGHT_GREEN); endl;
+    printStringColored("====================================================", 0x0A); endl;
+    printStringColored("||  _   _               _____ _____        _____  ||", 0x0A); endl;
+    printStringColored("|| | \\ | |             |  _  /  ___|      /  __ \\ ||", 0x0A); endl;
+    printStringColored("|| |  \\| | _____      _| | | \\ `--. ______| /  \\/ ||", 0x0A); endl;
+    printStringColored("|| | . ` |/ _ \\ \\ /\\ / / | | |`--. \\______| |     ||", 0x0A); endl;
+    printStringColored("|| | |\\  |  __/\\ V  V /\\ \\_/ /\\__/ /      | \\__/\\ ||", 0x0A); endl;
+    printStringColored("|| \\_| \\_/\\___| \\_/\\_/  \\___/\\____/        \\____/ ||", 0x0A); endl;
+    printStringColored("|| v.3.0.0                                        ||",  0x0A); endl;
+    printStringColored("====================================================", 0x0A); endl;
+    printStringColored("  Made by three dudes: ", 0x0A); endl;
+    printStringColored("- 13520103 - Amar Fadil", 0x0A); endl;
+    printStringColored("- 13520124 - Owen Christian Wijaya", 0x0A); endl;
+    printStringColored("- 13520139 - Fachry Dennis Heraldi", 0x0A); endl;
+
 
     endl;endl;
 }

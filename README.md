@@ -65,6 +65,10 @@ Pada _milestone 3_, ada beberapa implementasi tambahan:
    -  Pemanggilan fungsi-fungsi pada _library_ dilakukan via `handleInterrupt21`, yang mengatur fungsi-fungsi yang harus dijalankan melalui _interrupt_ tertentu. Implementasi `executeProgram` juga telah dilakukan di _kernel_.
 2. Pembuatan aplikasi _shell_
    -  Shell yang sebelumnya terpasang di _kernel_ via model _shared memory_ diubah menjadi model _message passing_. _Shell_ dan fungsionalitas dalam _shell_ diletakkan dalam folder `apps`
+   -  Aplikasi di folder `apps` dapat diakses secara _global_ maupun _local_
+      -  Eksekusi local dapat dilakukan dengan:
+         -  `/bin/<nama util>`, misalkan `/bin/cat <nama file>`
+         -  `cd` ke folder `bin`, lalu gunakan utilitas dengan sintaks `./<nama util>`, misal `./cat <nama file>`
 3. _Multiple program_
    - Pengguna dapat melakukan eksekusi _utility_ secara berantai. Eksekusi _utility_ memanfaatkan `exit` per eksekusinya.
 
@@ -73,6 +77,7 @@ Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula
 1. Pembuatan permainan Snake pada `apps`
 2. Pembuatan _text editor_ Nano pada `apps`
    - Layaknya utilitas sebelumnya, eksekusi kedua ini memanfaatkan `exit`.
+3. Kompilasi OS dapat dilakukan dengan opsi aplikasi apa saja yang ingin di-include (lebih lanjut di bagian **Cara Menjalankan OS**)
 
 ### Requirements
 
@@ -99,15 +104,12 @@ Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula
    Selanjutnya, jalankan kompilasi makefile menggunakan perintah berikut:
 
    ```
-   make build-run
+   make build-run //untuk menjalankan kompilasi seperti biasa
+   make tc-run TC=<KARAKTER> // untuk menjalankan kompilasi dengan 
+   test case tertentu
+   make tc-run APPS="shell <urutan rantai aplikasi>" // untuk menjalankan kompilasi dengan aplikasi tertentu
    ```
-
-   Kompilasi Makefile akan berjalan, dan apabila muncul _prompt_ dari `bochs`, tekan 'c' untuk melanjutkan.
-   
-   Untuk melakukan kompilasi menggunakan _testcase_ dari _folder_ `tc_gen`, lakukan urutan langkah berikut ini:
-   1. Pada `makefile -> tc:`, ubah nilai karakter pada `./tc_gen/tc_gen <KARAKTER>`. Misalkan ingin menjalankan _testcase_ A, ubah menjadi `./tc_gen/tc_gen A`.
-   2. Jalankan perintah `make tc-run`, tekan `c` pada `bochs` lalu matikan OS.
-   3. Kompilasi akan berlanjut dengan memasukkan _testcase_ pada `system.img`, dan setelah itu, OS akan terbuka lagi.
+   **[IMPORTANT]** Keterbatasan _node_ akan menyebabkan beberapa _testcase_ tidak ter-_load_ secara penuh, misalnya testcase B yang menggunakan seluruh _node_
 
 3. OS akan tampil di layar emulator Bochs. Pengguna dapat menggunakan utilitas-utilitas yang disediakan!
 
