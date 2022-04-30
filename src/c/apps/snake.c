@@ -66,8 +66,8 @@ int main() {
             curPos[0] = 0;
         }
         if (curPos[1] < 0) {
-            curPos[1] = MAX_CURSOR_Y;
-        } else if (curPos[1] > MAX_CURSOR_Y) {
+            curPos[1] = MAX_CURSOR_Y - 1;
+        } else if (curPos[1] > MAX_CURSOR_Y - 1) {
             curPos[1] = 0;
         }
         cnt = 0;

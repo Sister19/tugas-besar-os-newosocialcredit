@@ -2,32 +2,21 @@
 #include "../system/keyboard.h"
 #include "../includes/constant.h"
 #include "../system/filesystem.h"
+#include "../system/program.h"
 #include "kernel.h"
 
 int main()
 {
-    int i = 0, j = 0;
-    struct file_metadata shell_bin;
-    enum fs_retcode ret;
-    byte buffer[512 * 16];
+    bool is_title_avail;
     makeInterrupt21();
     intr(INT_VIDEO, VIDEO_MODE, 0, 0, 0); // set video mode to 03
     fillMap(); // call fillMap function
-    // find shell and read it.
-    strcpy(shell_bin.node_name, "shell");
-    shell_bin.buffer = buffer;
-    clear(buffer, 512*16);
-    shell_bin.parent_index = 0;
-    read(&shell_bin, &ret);
-    if (ret == 0) {
-        printTitle();
-        // load once
-        for (i = 0; i < 8192; i++) {
-            putInMemory(0x2000, i, buffer[i]);
-        }
-        executeProgram(0x2000);
+    // find title and read it
+    if (!__init("shell", 0x2000, 0x0)) {
+        printStringColored("Error loading OS...\nCan't find shell executable. Please rebuild the OS and include shell app.", COLOR_LIGHT_RED);
     } else {
-        printStringColored("Error loading OS...\nCan't find shell executable. Please rebuild the OS.", COLOR_LIGHT_RED);
+        is_title_avail = __init("title", 0x3000, 0x0);
+        executeProgram((is_title_avail ? 0x3000 : 0x2000));
     }
     while(true);
 }
@@ -123,10 +112,28 @@ void handleInterrupt21(int ax, int bx, int cx, int dx) {
                     break;
             }
             break;
-        case 0x5:
+        case 0x5: // program and arguments utils
             switch (REG_H(ax)) {
-                case 0:
+                case 0x0:
                     executeProgram(bx);
+                    break;
+                case 0x1:
+                    parseArgs(bx);
+                    break;
+                case 0x2:
+                    parsePathArg(bx, cx, dx);
+                    break;
+                case 0x3:
+                    ax = isDirectory(bx, cx);
+                    break;
+                case 0x4:
+                    ax = initProgram(bx, cx);
+                    break;
+                case 0x9:
+                    getShellData(bx);
+                    break;
+                case 0xA:
+                    setShellData(bx);
                     break;
                 default:
                     break;

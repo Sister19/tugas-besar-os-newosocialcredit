@@ -54,30 +54,45 @@ Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula
 Pada _milestone 3_, ada beberapa implementasi tambahan:
 1. Pembuatan _library_ dan _syscall_ `executeProgram`
    - Fungsionalitas-fungsionalitas yang ada sebelumnya dipindahkan ke beberapa library (dalam folder `src/library` seperti berikut:
-      -  `args.c`: fungsionalitas untuk melakukan _parsing_ argumen dan valdiasi direktori
+      -  `args.c`: fungsionalitas untuk melakukan _parsing_ argumen dan validasi direktori
       -  `fileio.c`: fungsionalitas untuk melakukan penulisan dan pembacaan file (implementasi lebih lanjut dari _read/write_)
       -  `program.c`: inisialisasi program
       -  `shell_common.c`: fungsionalitas untuk mengatur _shell_
-      -  `std_lib.c`: seperti milestone sebelumnya, std_lib mengandung fungsi-fungsi dasar seperti mod, div, memcpy, strcpy, dan lain-lain
+      -  `std_lib.c`: seperti milestone sebelumnya, std_lib mengandung fungsi-fungsi dasar seperti mod, div, memcpy, dan lain-lain 
       -  `string.c`: fungsi-fungsi untuk melakukan operasi pada string (strcpy, strcat, strlen)
-      -  `syscall.c`: fungsionalitas layar yang diterjemahkan dalam bentuk _system call_
-      -  `textio.c`: fungsi-fungsi untuk meng-_handle_ input/output program (gets/puts)
+      -  `syscall.c`: fungsionalitas lain yang diterjemahkan dalam bentuk _system call_
+      -  `textio.c`: fungsi-fungsi untuk meng-_handle_ input/output program `(gets/puts)`
    -  Pemanggilan fungsi-fungsi pada _library_ dilakukan via `handleInterrupt21`, yang mengatur fungsi-fungsi yang harus dijalankan melalui _interrupt_ tertentu. Implementasi `executeProgram` juga telah dilakukan di _kernel_.
 2. Pembuatan aplikasi _shell_
    -  Shell yang sebelumnya terpasang di _kernel_ via model _shared memory_ diubah menjadi model _message passing_. _Shell_ dan fungsionalitas dalam _shell_ diletakkan dalam folder `apps`
    -  Aplikasi di folder `apps` dapat diakses secara _global_ maupun _local_
       -  Eksekusi local dapat dilakukan dengan:
-         -  `/bin/<nama util>`, misalkan `/bin/cat <nama file>`
-         -  `cd` ke folder `bin`, lalu gunakan utilitas dengan sintaks `./<nama util>`, misal `./cat <nama file>`
+         -  **Absolute path:** `/bin/<nama util>`, misalkan `/bin/cat <nama file>`
+         -  **Relative path:** `cd` ke folder `bin`, lalu gunakan utilitas dengan sintaks `./<nama util>`, misal `./cat <nama file>`
 3. _Multiple program_
-   - Pengguna dapat melakukan eksekusi _utility_ secara berantai. Eksekusi _utility_ memanfaatkan `exit` per eksekusinya.
+   - Pengguna dapat melakukan eksekusi _utility_ secara berantai. Eksekusi _utility_ memanfaatkan mesage passing dan `exit` per eksekusinya.
 
 Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula implementasi tambahan sebagai tujuan kreativitas sebagai berikut:
 
 1. Pembuatan permainan Snake pada `apps`
 2. Pembuatan _text editor_ Nano pada `apps`
-   - Layaknya utilitas sebelumnya, eksekusi kedua ini memanfaatkan `exit`.
 3. Kompilasi OS dapat dilakukan dengan opsi aplikasi apa saja yang ingin di-include (lebih lanjut di bagian **Cara Menjalankan OS**)
+4. Pengguna dapat menambahkan program baru dengan cara berikut:
+   1. Buat file di dalam folder `apps` dengan nama yang diinginkan
+   2. Pastikan struktur kode seperti berikut:
+   ```c
+   #include "../library/program.h"
+
+   int main() {
+      struct shell_data data;
+      getShellData(&data);
+      // Kode diletakkan disini
+      exit(&data);
+   }
+   ```
+   3. Gunakan library yang tersedia seperti textio.h, string.h, fileio.h dengan `#include "../library/<nama_library>"`.
+   4. Tidak perlu melakukan perubahan pada makefile, program otomatis akan diinjeksi ke dalam sistem operasi.
+   5. Silahkan melakukan eksplorasi sebebas-bebasnya ^_^
 
 ### Requirements
 
@@ -96,18 +111,17 @@ Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula
    ```
 2. Buka WSL2, lalu navigasi ke _folder_ `root` dan jalankan perintah berikut untuk melakukan instalasi _library_:
 
-   ```
+   ```shell
    sudo apt update
    sudo apt install nasm bcc bin86 bochs bochs-x make
    ```
 
-   Selanjutnya, jalankan kompilasi makefile menggunakan perintah berikut:
+   Selanjutnya, jalankan kompilasi makefile menggunakan salah satu dari perintah berikut:
 
-   ```
+   ```shell
    make build-run //untuk menjalankan kompilasi seperti biasa
-   make tc-run TC=<KARAKTER> // untuk menjalankan kompilasi dengan 
-   test case tertentu
-   make tc-run APPS="shell <urutan rantai aplikasi>" // untuk menjalankan kompilasi dengan aplikasi tertentu
+   make tc-run TC=<KARAKTER> // untuk menjalankan kompilasi dengan test case tertentu
+   make tc-run APPS="shell <urutan rantai aplikasi, dipisahkan dengan spasi>" // untuk menjalankan kompilasi dengan aplikasi tertentu. Contoh: make tc-run APPS="shell cp snake mv".
    ```
    **[IMPORTANT]** Keterbatasan _node_ akan menyebabkan beberapa _testcase_ tidak ter-_load_ secara penuh, misalnya testcase B yang menggunakan seluruh _node_
 

@@ -1,6 +1,6 @@
 #include "program.h"
+#include "textio.h"
 #include "../includes/struct_fs.h"
-#include "../includes/interrupt.h"
 #include "args.h"
 
 void exec(int segment) {
@@ -8,27 +8,38 @@ void exec(int segment) {
 }
 
 bool initProgram(struct parsed_arg *args, int segment) {
-    int i;
-    struct file_metadata bin;
-    enum fs_retcode ret;
-    byte buffer[512 * 16];
-    strncpy(bin.node_name, args->name_res, 14);
-    bin.buffer = buffer;
-    clear(buffer, 512*16);
-    bin.parent_index = args->arg_ldir; // local bin
-    read(&bin, &ret);
-    if (ret != FS_SUCCESS && !args->is_traversed) { // we search for global bin
-        bin.parent_index = 0;
-        read(&bin, &ret);
-    }
-    if (ret == FS_SUCCESS) {
-        for (i = 0; i < 8192; i++) {
-            putInMemory(segment, i, buffer[i]);
+    return intr(0x21, REG(0x4, 0x5), args, segment, 0);
+}
+
+void exit(struct shell_data* data);
+void runner(struct shell_data* data) {
+    int segment;
+    byte buffer[512];
+    struct parsed_arg args;
+    parseArgs(data);
+    clear(buffer, 512);
+    if (
+        data->cwd.arg_count > 0 &&
+        (data->cwd.parse_ret == INPUT_TRAIL || data->cwd.parse_ret == INPUT_END)
+    ) {
+        // since we only use one program at a time, we cycle use 0x3000 and 0x4000
+        // thus we can supply infinite amount of multi program
+        segment = 0x3000 + 0x1000 * (data->cwd.prog_count % 2);
+        parsePathArg(data->arg.argv[0], data->cwd.current_dir, &args);
+        if(initProgram(&args, segment)) {
+            ++data->cwd.prog_count;
+            setShellData(data);
+            exec(segment);
+        } else {
+            putsc("No program found: ", COLOR_LIGHT_RED);
+            puts(data->arg.argv[0]); endl;
         }
-        return true;
-    } else {
-        return false;
+    } else if (data->cwd.parse_ret == UNCLOSED_STRING) {
+        putsc("Unclosed string in input!\n", COLOR_LIGHT_RED);
+    } else if (data->cwd.parse_ret == ARG_LIMIT) {
+        putsc("Arguments reached limit! (8 max)\n", COLOR_LIGHT_RED);
     }
+    exit(data);
 }
 
 void exit(struct shell_data* data) {

@@ -8,7 +8,6 @@ void main(){
     char* path;
     struct parsed_arg args;
     struct shell_data data;
-    struct node_entry node;
     struct file_metadata metadata;
     enum fs_retcode ret;
     getShellData(&data);
@@ -16,7 +15,7 @@ void main(){
         for(i=1; i<data.cwd.arg_count; i++) {
             path = data.arg.argv[i];
             parsePathArg(path, data.cwd.current_dir, &args);
-            if (checkIsExist(path, args.arg_ldir) && checkIsDirectory(&node, path, args.arg_ldir)) {
+            if (checkIsExist(path, args.arg_ldir) && checkIsDirectory(args.node, path, args.arg_ldir)) {
                 metadata.parent_index = args.arg_ldir;
                 metadata.buffer = 0;
                 strcpy(metadata.node_name, args.name_res);
