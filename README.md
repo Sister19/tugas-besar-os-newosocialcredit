@@ -2,6 +2,7 @@
 
 > - Milestone 1 : 1 Maret 2022 - Pembuatan Sistem Operasi Sederhana: Booting, Kernel, dan System Call
 > - Milestone 2 : 5 April 2022 - Pembuatan Filesystem dan Shell Sederhana
+> - Milestone 3 : 30 April 2022 - Pembuatan dan Eksekusi Program Menggunakan System Call
 
 ## Deskripsi
 
@@ -50,7 +51,28 @@ Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula
 2. Implementasi color printing. Tujuan pengimplementasian ini untuk memudahkan dalam menampilkan karakter dengan warna tertentu. Salah satu penggunaannya adalah pada _utility_ `ls`. Warna dapat membedakan dan mengindikasikan suatu direktori merupakan sebuah folder atau sebuah file.
    - Fungsi ini dapat diimplementasikan pada file `screen.c`.
 
-## Cara Penggunaan
+Pada _milestone 3_, ada beberapa implementasi tambahan:
+1. Pembuatan _library_ dan _syscall_ `executeProgram`
+   - Fungsionalitas-fungsionalitas yang ada sebelumnya dipindahkan ke beberapa library (dalam folder `src/library` seperti berikut:
+      -  `args.c`: fungsionalitas untuk melakukan _parsing_ argumen dan valdiasi direktori
+      -  `fileio.c`: fungsionalitas untuk melakukan penulisan dan pembacaan file (implementasi lebih lanjut dari _read/write_)
+      -  `program.c`: inisialisasi program
+      -  `shell_common.c`: fungsionalitas untuk mengatur _shell_
+      -  `std_lib.c`: seperti milestone sebelumnya, std_lib mengandung fungsi-fungsi dasar seperti mod, div, memcpy, strcpy, dan lain-lain
+      -  `string.c`: fungsi-fungsi untuk melakukan operasi pada string (strcpy, strcat, strlen)
+      -  `syscall.c`: fungsionalitas layar yang diterjemahkan dalam bentuk _system call_
+      -  `textio.c`: fungsi-fungsi untuk meng-_handle_ input/output program (gets/puts)
+   -  Pemanggilan fungsi-fungsi pada _library_ dilakukan via `handleInterrupt21`, yang mengatur fungsi-fungsi yang harus dijalankan melalui _interrupt_ tertentu. Implementasi `executeProgram` juga telah dilakukan di _kernel_.
+2. Pembuatan aplikasi _shell_
+   -  Shell yang sebelumnya terpasang di _kernel_ via model _shared memory_ diubah menjadi model _message passing_. _Shell_ dan fungsionalitas dalam _shell_ diletakkan dalam folder `apps`
+3. _Multiple program_
+   - Pengguna dapat melakukan eksekusi _utility_ secara berantai. Eksekusi _utility_ memanfaatkan `exit` per eksekusinya.
+
+Selain implementasi yang diwajibkan pada spesifikasi _milestone_, dilakukan pula implementasi tambahan sebagai tujuan kreativitas sebagai berikut:
+
+1. Pembuatan permainan Snake pada `apps`
+2. Pembuatan _text editor_ Nano pada `apps`
+   - Layaknya utilitas sebelumnya, eksekusi kedua ini memanfaatkan `exit`.
 
 ### Requirements
 
